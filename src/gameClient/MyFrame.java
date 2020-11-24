@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package gameClient;
 import Server.Agent_Graph_Algo;
 import api.geo_location;
@@ -8,6 +9,17 @@ import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
 import gameClient.util.Range2Range;
+=======
+import Server.Agent_Graph_Algo;
+import geo_location;
+import edge_data;
+import directed_weighted_graph;
+import node_data;
+import Point3D;
+import Range;
+import Range2D;
+import Range2Range;
+>>>>>>> 53f9b34e32401d6a5efb11ad026c12dc35ff5805
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +29,11 @@ import java.util.List;
 public class MyFrame extends JFrame{
 	private int _ind;
 	private Arena _ar;
+<<<<<<< HEAD
 	private gameClient.util.Range2Range _w2f;
+=======
+	private Range2Range _w2f;
+>>>>>>> 53f9b34e32401d6a5efb11ad026c12dc35ff5805
 	MyFrame(String a) {
 		super(a);
 		int _ind = 0;
@@ -31,14 +47,22 @@ public class MyFrame extends JFrame{
 		super.setSize(w,h);
 		Range rx = new Range(20,this.getWidth()-20);
 		Range ry = new Range(this.getHeight()-10,150);
+<<<<<<< HEAD
 		gameClient.util.Range2D frame = new gameClient.util.Range2D(rx,ry);
+=======
+		Range2D frame = new Range2D(rx,ry);
+>>>>>>> 53f9b34e32401d6a5efb11ad026c12dc35ff5805
 		_w2f = Agent_Graph_Algo.w2f(_ar.getGraph(), frame);
 		this.repaint();
 	}
 	private void updateFrame() {
 		Range rx = new Range(20,this.getWidth()-20);
 		Range ry = new Range(this.getHeight()-10,150);
+<<<<<<< HEAD
 		gameClient.util.Range2D frame = new Range2D(rx,ry);
+=======
+		Range2D frame = new Range2D(rx,ry);
+>>>>>>> 53f9b34e32401d6a5efb11ad026c12dc35ff5805
 		_w2f = new Range2Range(_w2f.getWorld(), frame);
 	}
 	public void paint(Graphics g) {

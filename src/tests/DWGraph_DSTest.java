@@ -1,6 +1,6 @@
 package tests;
 
-import api.DWGraph_DS;
+import api.*;
 import api.edge_data;
 import api.node_data;
 import org.junit.jupiter.api.Test;

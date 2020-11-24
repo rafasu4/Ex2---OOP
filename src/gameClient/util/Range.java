@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 package gameClient.util;
+=======
+>>>>>>> 53f9b34e32401d6a5efb11ad026c12dc35ff5805
 /**
  * This class represents a simple 1D range of shape [min,max]
  * @author boaz_benmoshe
