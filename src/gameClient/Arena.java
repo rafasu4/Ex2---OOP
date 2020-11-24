@@ -1,9 +1,7 @@
-package gameClient;
-
-import api.geo_location;
-import api.directed_weighted_graph;
-import api.node_data;
-import gameClient.util.Point3D;
+import geo_location;
+import directed_weighted_graph;
+import node_data;
+import Point3D;
 
 import java.util.ArrayList;
 import java.util.Iterator;

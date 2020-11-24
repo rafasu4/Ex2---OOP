@@ -1,4 +1,5 @@
 package api;
+
 import java.util.Collection;
 /**
  * This interface represents a directional weighted graph.

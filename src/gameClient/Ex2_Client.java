@@ -1,10 +1,8 @@
-package gameClient;
-
 import Server.Agent_Graph_Algo;
 import Server.Game_Server_Ex2;
-import api.game_service;
-import api.edge_data;
-import api.directed_weighted_graph;
+import game_service;
+import edge_data;
+import directed_weighted_graph;
 //import Server.DWGraph;
 import org.json.JSONException;
 import org.json.JSONObject;
