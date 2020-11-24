@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class DWGraph_DS implements directed_weighted_graph {
     private HashMap<Integer, node_data> allNodes;
-    private HashMap<Integer, HashMap<Integer, edge_data>> allHashes; // ALL HASHMAPS
+    private HashMap<Integer, HashMap<Integer, edge_data>> allHashes;
     private int mc, ed;
 
 
@@ -17,7 +17,7 @@ public class DWGraph_DS implements directed_weighted_graph {
         allNodes = new HashMap<>();
         allHashes = new HashMap<>();
         mc = 0;
-        ed = 0
+        ed = 0;
     }
 
     //Case A :the node is not exits.
@@ -33,11 +33,10 @@ public class DWGraph_DS implements directed_weighted_graph {
     // case B the nodes are exit but the edge not
     //case C if the edge exits.
     public edge_data getEdge(int src, int dest) {
-        boolean CaseA = (allNodes.containsKey(src)) && (allNodes.containsKey(dest));
+        boolean CaseA = (getNode(src) == null || getNode(dest) == null);
         boolean CaseB = !(allHashes.get(src).containsKey(dest));
         if (CaseA || CaseB) return null;
         else { //Case C
-            node_data srcNode = getNode(src);
             return allHashes.get(src).get(dest); // if edges in the graph class
         }
     }
@@ -45,7 +44,7 @@ public class DWGraph_DS implements directed_weighted_graph {
     @Override
     // case A - if he is not exit
     public void addNode(node_data n) {
-        if (!(allNodes.containsKey(n.getKey()))) {//Case A .
+        if (getNode(n.getKey()) == null) {//Case A .
             allNodes.put(n.getKey(), n);
             allHashes.put(n.getKey(), new HashMap<>());
             mc++;
@@ -57,16 +56,22 @@ public class DWGraph_DS implements directed_weighted_graph {
     //Case B - the edge exits but you need to update the wight.
     //Case C - the edge  exits (do nothing).
     public void connect(int src, int dest, double w) {
-        if ((allNodes.containsKey(src)) && (allHashes.containsKey(dest))) { // check if the nodes are exit in the graph.
-            boolean CaseA = (!(allHashes.get(src).containsKey(dest)));// make a new edge and add.
-            boolean CaseB = (allHashes.get(src).get(dest).getWeight() != w);// case B if the edge is exits but need to update wight
-            if (CaseA || CaseB) {
-                if (CaseA) { // if its A count edges.
-                    mc++;
-                    ed++;
-                } // if its A count edges.
-                edge_data newEdge = new EdgeData(src, dest, w);// make a new edge
-                allHashes.get(src).put(dest, w); // put it into "src" Hashmap.
+        // check if the nodes are exit in the graph.
+        boolean CaseA = (getEdge(src, dest) == null);// make a new edge and add.
+
+        if (CaseA) {
+            mc++;
+            ed++;
+            edge_data newEdge = new EdgeData(src, dest, w);// make a new edge
+            allHashes.get(src).put(dest, newEdge); // put it into "src" Hashmap.
+        } else
+            { // if there is an edge.
+            boolean CaseB = (getEdge(src, dest).getWeight() != w);
+            if (CaseB) {
+                edge_data updateWeight = new EdgeData(src, dest, w);// make a new edge
+                allHashes.get(src).put(dest, updateWeight); // put it into "src" Hashmap.
+                mc++;
+
             }
         }
 
