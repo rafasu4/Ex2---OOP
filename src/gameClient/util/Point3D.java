@@ -1,13 +1,8 @@
 /**
  * This class represents a 3D point in space.
  */
-<<<<<<< HEAD
 package gameClient.util;
 import api.geo_location;
-=======
-
-import geo_location;
->>>>>>> 53f9b34e32401d6a5efb11ad026c12dc35ff5805
 import java.io.Serializable;
 
 public class Point3D implements geo_location, Serializable{

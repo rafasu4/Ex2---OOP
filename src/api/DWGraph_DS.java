@@ -7,12 +7,11 @@ import java.util.Iterator;
 
 public class DWGraph_DS implements directed_weighted_graph {
     private HashMap<Integer, node_data> allNodes;
-   // private HashMap<Integer, HashMap<Integer, edge_data>> allHashes;
     private int modeCount, edgesCount;
 
 
     /**
-     * constrcutur
+     *Constructor
      */
     public DWGraph_DS() {
         allNodes = new HashMap<>();

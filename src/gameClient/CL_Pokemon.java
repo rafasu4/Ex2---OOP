@@ -1,12 +1,7 @@
-<<<<<<< HEAD
 package gameClient;
 
 import api.edge_data;
 import gameClient.util.Point3D;
-=======
-import edge_data;
-import Point3D;
->>>>>>> 53f9b34e32401d6a5efb11ad026c12dc35ff5805
 import org.json.JSONObject;
 
 public class CL_Pokemon {

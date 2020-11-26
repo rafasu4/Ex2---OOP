@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package gameClient;
 
 import Server.Agent_Graph_Algo;
@@ -7,15 +6,6 @@ import api.directed_weighted_graph;
 import api.edge_data;
 import api.game_service;
 import api.node_data;
-=======
-import Server.Agent_Graph_Algo;
-import Server.Game_Server_Ex2;
-import directed_weighted_graph;
-import edge_data;
-import game_service;
-import node_data;
->>>>>>> 53f9b34e32401d6a5efb11ad026c12dc35ff5805
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;

@@ -1,17 +1,9 @@
-<<<<<<< HEAD
 package gameClient;
 import Server.Agent_Graph_Algo;
 import Server.Game_Server_Ex2;
 import api.directed_weighted_graph;
 import api.edge_data;
 import api.game_service;
-=======
-import Server.Agent_Graph_Algo;
-import Server.Game_Server_Ex2;
-import directed_weighted_graph;
-import edge_data;
-import game_service;
->>>>>>> 53f9b34e32401d6a5efb11ad026c12dc35ff5805
 import org.json.JSONException;
 import org.json.JSONObject;
 

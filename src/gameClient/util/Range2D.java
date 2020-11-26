@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 package gameClient.util;
 import api.geo_location;
-=======
-import geo_location;
->>>>>>> 53f9b34e32401d6a5efb11ad026c12dc35ff5805
 
 /**
  * This class represents a 2D Range, composed from two 1D Ranges.

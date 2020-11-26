@@ -1,17 +1,10 @@
-<<<<<<< HEAD
+
 package gameClient;
 import api.edge_data;
 import api.directed_weighted_graph;
 import api.node_data;
 import api.geo_location;
 import gameClient.util.Point3D;
-=======
-import edge_data;
-import directed_weighted_graph;
-import node_data;
-import geo_location;
-import Point3D;
->>>>>>> 53f9b34e32401d6a5efb11ad026c12dc35ff5805
 import org.json.JSONObject;
 
 public class CL_Agent {
