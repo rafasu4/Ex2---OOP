@@ -240,6 +240,14 @@ public class DWGraph_DS implements directed_weighted_graph {
             this.info = "";
             this.tag = 0;
         }
+        public NodeData(int key) {
+            this.key = key;
+            this.weight = 0.0;
+            neighbors = new HashMap<>();
+            otherneighbors = new HashMap<>();
+            this.info = "";
+            this.tag = 0;
+        }
 
         /**
          * Copy constructor
@@ -248,6 +256,7 @@ public class DWGraph_DS implements directed_weighted_graph {
             this.key = n.getKey();
             this.weight = n.getWeight();
             neighbors = new HashMap<>();
+            otherneighbors=new HashMap<>();
             this.info = n.getInfo();
             this.tag = n.getTag();
         }

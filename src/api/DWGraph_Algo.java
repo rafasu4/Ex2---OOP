@@ -63,7 +63,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         //building edges in the copy graph, the same way as th original
         for (node_data node : pointer) {
             for (edge_data edge : this.g.getE(node.getKey())) {
-                newGraph.connect(edge.getDest(), node.getKey(), edge.getWeight());
+                newGraph.connect(edge.getDest(), edge.getSrc(), edge.getWeight());
             }
         }
         return newGraph;
@@ -92,6 +92,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     @Override
     public boolean isConnected() {
+        if (g.nodeSize()<1)return true;
         int firstNode = g.getV().iterator().next().getKey();
         directed_weighted_graph graphT = this.copyT();
         directed_weighted_graph graph = getGraph();
