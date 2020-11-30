@@ -99,28 +99,38 @@ public class DWGraph_DS implements directed_weighted_graph {
         NodeData removedNode = (NodeData) this.getNode(key);
 
         //remove all the edge i connect to them.//'
-        int i=0;
-        int []a1=new int [removedNode.neighbors.size()];
+       // int i=0;
+       // int []a1=new int [removedNode.neighbors.size()];
         Iterator<edge_data> it = removedNode.neighbors.values().iterator();
         while (it.hasNext()) { // delete from who i connect to.
-           a1[i]=it.next().getDest();
-           i++;
+            NodeData current=(NodeData)getNode(it.next().getDest());
+            current.otherneighbors.remove(key);
+            edgesCount--;
+            modeCount++;
+          // a1[i]=it.next().getDest();
+          // i++;
         }
-        int j=0;
-        int []a2=new int [removedNode.otherneighbors.size()];
+       // int j=0;
+        //int []a2=new int [removedNode.otherneighbors.size()];
         //removed the edges connected to me .
-        Iterator<edge_data> itOthere = removedNode.otherneighbors.values().iterator();
-        while (itOthere.hasNext()) {
-            a2[j]=itOthere.next().getSrc();
-            j++;
+        Iterator<edge_data> itOther = removedNode.otherneighbors.values().iterator();
+        while (itOther.hasNext()) {
+            NodeData current=(NodeData)getNode(itOther.next().getSrc());
+            current.neighbors.remove(key);
+            edgesCount--;
+            modeCount++;
+         //   a2[j]=itOther.next().getSrc();
+          //  j++;
         }
-        int max=Math.max(i,j);
-        for (int k = 0; k < max; k++) {
-            if (k<i) removeEdge(key,a1[k]);
-            if (k<j) removeEdge(a2[k],key);
-        }
+       // int max=Math.max(i,j);
+       // for (int k = 0; k < max; k++) {
+        //    if (k<i) removeEdge(key,a1[k]);
+       //     if (k<j) removeEdge(a2[k],key);
+       // }
         modeCount++;
-        return removedNode;
+         removedNode.neighbors=new HashMap<>();//it should be empty now
+        removedNode.otherneighbors=new HashMap<>();//it should be empty now
+         return removedNode;
     }
 
 
