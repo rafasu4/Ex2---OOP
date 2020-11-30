@@ -107,6 +107,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     @Override
     public double shortestPathDist(int src, int dest) {
         HashMap<Integer, Double> SPD = SPD(src, dest);
+        double inf = Double.POSITIVE_INFINITY;
+        if (SPD.get(dest)==inf)return -1;
         return SPD.get(dest);
 
     }
@@ -131,8 +133,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             node_data currentNode = g.getNode(currentkey);
             for (edge_data currentSib : g.getE(currentkey)) {
                 int currentSibkey = currentSib.getDest();
-                double offer = tempD.get(currentkey) + currentSib.getWeight();// i check if i can "offer" you a better way. my ofer his from the nodes that i stand on and th wighte of this edge.
-                if (offer < tempD.get(currentSib)) { // if its a better way i will put it in the tag.
+                double offer = tempD.get(currentkey) + currentSib.getWeight();//
+                if (offer < tempD.get(currentSibkey)) { // if its a better way i will put it in the tag.
                     tempD.put(currentSibkey, offer);
                     quefodisk.add(currentSibkey);
                 }
@@ -145,6 +147,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     @Override
     public List<node_data> shortestPath(int src, int dest) {
         HashMap<Integer, Double> SPD = SPD(src, dest);
+        if (SPD.get(dest)==-1)return null;
         Stack<node_data> way = new Stack<>();
         LinkedList<node_data> way2 = new LinkedList<>();
 

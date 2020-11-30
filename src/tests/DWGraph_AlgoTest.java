@@ -110,6 +110,37 @@ class DWGraph_AlgoTest {
         assertFalse(ga1.isConnected());
 
     }
+    @Test
+    public void ShortestPath() {
+        dw_graph_algorithms ga1 = new DWGraph_Algo();
+        // 3 nodes
+        directed_weighted_graph a = GcreatorRandom(3,0);
+        a.connect(0,1,4.0);
+        a.connect(0,2,1.0);
+        a.connect(2,1,1.0);
+        ga1.init(a);
+        assertEquals(ga1.shortestPathDist(0,1),2.0);
+        ga1.getGraph().removeEdge(2,1);
+        assertEquals(ga1.shortestPathDist(0,1),4.0);
+        a=(GcreatorRandom(10,0));
+        a.connect(0,1,4.0);
+        a.connect(1,2,1.0);
+        a.connect(2,3,1.0);
+        a.connect(3,4,4.0);
+        a.connect(4,5,1.0);
+        a.connect(5,6,1.0);
+        a.connect(6,7,4.0);
+        a.connect(7,8,1.0);
+        a.connect(8,9,1.0);
+        a.connect(0,9,50);
+        ga1.init(a);
+        assertEquals(ga1.shortestPathDist(0,9),18.0);
+        assertEquals(ga1.shortestPathDist(6,5),-1.0);
+        assertEquals(ga1.shortestPathDist(1,0),-1.0);
+        assertEquals(ga1.shortestPathDist(9,8),-1.0);
+
+    }
+
 
     public static directed_weighted_graph GcreatorNotRandom(int v_size, int e_size) {
         DWGraph_DS a = new DWGraph_DS();
