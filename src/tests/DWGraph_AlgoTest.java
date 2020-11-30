@@ -2,21 +2,11 @@ package tests;
 
 import api.*;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Node;
-
-import java.lang.reflect.Array;
 import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 import api.DWGraph_DS;
-import api.edge_data;
 import api.node_data;
-import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -88,6 +78,36 @@ class DWGraph_AlgoTest {
         // 2 nodes with 2 edge to eachother
         ga1.getGraph().connect(1,0,5);
         assertTrue(ga1.isConnected());
+        // linkin list
+        DWGraph_DS g2 = (DWGraph_DS) GcreatorNotRandom(100,98);
+        g2.connect(0,1,0.0);
+        g2.connect(1,2,0.0);
+        g2.connect(2,3,0.0);
+        g2.connect(3,4,0.0);
+        g2.connect(4,5,0.0);
+        g2.connect(5,6,0.0);
+        g2.connect(6,7,0.0);
+        g2.connect(7,8,0.0);
+        g2.connect(8,9,0.0);
+        ga1.init(g2);
+        assertFalse(ga1.isConnected());
+        // 1000 nodes and 998
+        directed_weighted_graph g3 = (DWGraph_DS) GcreatorRandom(1000,998);
+        ga1.init(g3);
+        assertFalse(ga1.isConnected());
+        //3 nodes and 1 edges
+        ga1.init(GcreatorRandom(3,1));
+        assertFalse(ga1.isConnected());
+        //3 nodes and 6 edges
+        ga1.init(GcreatorRandom(3,6));
+        assertTrue(ga1.isConnected());
+        //
+        g3=  GcreatorRandom(3,0);
+        g3.connect(0,1,0.0);
+        g3.connect(1,2,0.0);
+        g3.connect(0,2,0.0);
+        ga1.init(g3);
+        assertFalse(ga1.isConnected());
 
     }
 
@@ -95,6 +115,7 @@ class DWGraph_AlgoTest {
         DWGraph_DS a = new DWGraph_DS();
         for (int i = 0; i < v_size; i++) {
             node_data n = a.new NodeData(i, i);
+            a.addNode(n);
         }
         edgeNotRandom(a, e_size);
         return a;
@@ -104,6 +125,7 @@ class DWGraph_AlgoTest {
         DWGraph_DS a = new DWGraph_DS();
         for (int i = 0; i < v_size; i++) {
             node_data n = a.new NodeData(i, i);
+            a.addNode(n);
         }
         edgeRandom(a, e_size);
         return a;
@@ -116,15 +138,15 @@ class DWGraph_AlgoTest {
                     g.connect(i, i + j, (double) i + j);
                 }
             }
-
         }
     }
 
     public static void edgeRandom(directed_weighted_graph a, int e_size) {
         while (a.edgeSize() < e_size) {
             Random rnd = new Random();
-            int r1 = rnd.nextInt(a.nodeSize());
-            int r2 = rnd.nextInt(a.nodeSize());
+            int Limit=a.nodeSize();
+            int r1 = rnd.nextInt(Limit);
+            int r2 = rnd.nextInt(Limit);
             double w = (double) r1 + r2;
             a.connect(r1, r2, w);
         }

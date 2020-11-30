@@ -55,26 +55,28 @@ public class DWGraph_DS implements directed_weighted_graph {
     //Case B - the edge exits but you need to update the wight.
     //Case C - the edge  exits (do nothing).
     public void connect(int src, int dest, double w) {
-        NodeData srcNode = (NodeData) this.getNode(src);
-        NodeData destNode = (NodeData) this.getNode(dest);
-        boolean CaseA = (getEdge(src, dest) == null);
-        //if there's no edge between the nodes
-        if (CaseA) {
-            edge_data newEdge = new EdgeData(src, dest, w);// make a new edge
-            srcNode.neighbors.put(dest, newEdge);
-            destNode.otherneighbors.put(src, newEdge);
-            edgesCount++;
-            modeCount++;
-        }
-        //if there's existing edge - update it's weight
-        else {
-            boolean newWeight = (getEdge(src, dest).getWeight() != w);
-            //if the new weight isn't the same as current - perform an update
-            if (newWeight) {
-                edge_data newEdge = new EdgeData(src, dest, w);
-                srcNode.neighbors.replace(dest, newEdge);
+        if (!(src == dest)) {
+            NodeData srcNode = (NodeData) this.getNode(src);
+            NodeData destNode = (NodeData) this.getNode(dest);
+            boolean CaseA = (getEdge(src, dest) == null);
+            //if there's no edge between the nodes
+            if (CaseA) {
+                edge_data newEdge = new EdgeData(src, dest, w);// make a new edge
+                srcNode.neighbors.put(dest, newEdge);
                 destNode.otherneighbors.put(src, newEdge);
+                edgesCount++;
                 modeCount++;
+            }
+            //if there's existing edge - update it's weight
+            else {
+                boolean newWeight = (getEdge(src, dest).getWeight() != w);
+                //if the new weight isn't the same as current - perform an update
+                if (newWeight) {
+                    edge_data newEdge = new EdgeData(src, dest, w);
+                    srcNode.neighbors.replace(dest, newEdge);
+                    destNode.otherneighbors.put(src, newEdge);
+                    modeCount++;
+                }
             }
         }
     }

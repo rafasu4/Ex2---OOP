@@ -77,9 +77,9 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         queforbfs.add(src);
         while (!(queforbfs.isEmpty())) {
             Integer thisNode = queforbfs.poll();
-            for (edge_data thisSi : g.getE(src)) {
+            for (edge_data thisSi : g.getE(thisNode)) {
                 node_data thisSib = this.g.getNode(thisSi.getDest());
-                if (thisSib.getTag() == 0) {
+                if (thisSib.getTag() == 0 && (thisSib.getKey() != src)) {
                     thisSib.setTag(1);
                     queforbfs.add(thisSib.getKey());
                     numOfVisits++;
@@ -92,7 +92,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     @Override
     public boolean isConnected() {
-        if (g.nodeSize()<1)return true;
+        if (g.nodeSize() < 1) return true;
         int firstNode = g.getV().iterator().next().getKey();
         directed_weighted_graph graphT = this.copyT();
         directed_weighted_graph graph = getGraph();
