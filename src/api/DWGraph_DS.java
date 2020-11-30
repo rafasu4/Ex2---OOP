@@ -98,17 +98,26 @@ public class DWGraph_DS implements directed_weighted_graph {
         if (!allNodes.containsKey(key)) return null;
         NodeData removedNode = (NodeData) this.getNode(key);
 
-        //remove all the edge i connect to them.//
-        Iterator<edge_data> it = this.getE(key).iterator();
+        //remove all the edge i connect to them.//'
+        int i=0;
+        int []a1=new int [removedNode.neighbors.size()];
+        Iterator<edge_data> it = removedNode.neighbors.values().iterator();
         while (it.hasNext()) { // delete from who i connect to.
-            int keydest = it.next().getDest();
-            removeEdge(key, keydest);
+           a1[i]=it.next().getDest();
+           i++;
         }
+        int j=0;
+        int []a2=new int [removedNode.otherneighbors.size()];
         //removed the edges connected to me .
         Iterator<edge_data> itOthere = removedNode.otherneighbors.values().iterator();
         while (itOthere.hasNext()) {
-            int keySrc = itOthere.next().getSrc();
-            removeEdge(keySrc, key);
+            a2[j]=itOthere.next().getSrc();
+            j++;
+        }
+        int max=Math.max(i,j);
+        for (int k = 0; k < max; k++) {
+            if (k<i) removeEdge(key,a1[k]);
+            if (k<j) removeEdge(a2[k],key);
         }
         modeCount++;
         return removedNode;

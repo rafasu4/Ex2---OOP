@@ -45,9 +45,9 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return newGraph;
     }
 
-    private void setAllTags(double num) {
+    private void setAllTags(int num) {
         for (node_data thisnode : this.g.getV()) {
-         //   thisnode.setTag(((int)num);
+            thisnode.setTag(((int) num));
         }
     }
 
@@ -104,36 +104,69 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     }
 
     @Override
-    public double shortestPathDist(int src, int dest) {return 0;}
-/*
+    public double shortestPathDist(int src, int dest) {
+        HashMap<Integer, Double> SPD = SPD(src, dest);
+        return SPD.get(dest);
+
+    }
+
+    private HashMap<Integer, Double> SPD(int src, int dest) {
+
         //setting for the  algorytem
         double inf = Double.POSITIVE_INFINITY;
-        this.setAllTags((inf)); // i put in all infinity.
+        HashMap<Integer, Double> tempD = new HashMap<>();
+        for (node_data thisnode : this.g.getV()) {
+            tempD.put(thisnode.getKey(), inf);
+        }
+
         node_data node1 = g.getNode(src);
         node_data node2 = g.getNode(dest);
-        //node1.setTag(0);
+        tempD.put(src, 0.0);
         Queue<Integer> quefodisk = new LinkedList<>();
         // starting to "walk"
         quefodisk.add(src);
         while (!quefodisk.isEmpty()) {
             int currentkey = quefodisk.poll();
             node_data currentNode = g.getNode(currentkey);
-            for (node_data currentSib : g.getV(currentkey)) {
-                double offer = g.getNode(currentkey).getTag() + currentNode.getLocation().distance(currentSib.getLocation());// i check if i can "offer" you a better way. my ofer his from the nodes that i stand on and th wighte of this edge.
-                if (offer < currentSib.getTag()) { // if its a better way i will put it in the tag.
-                    currentSib.setTag(offer);
-                    quefodisk.add(currentSib.getKey());
+            for (edge_data currentSib : g.getE(currentkey)) {
+                int currentSibkey = currentSib.getDest();
+                double offer = tempD.get(currentkey) + currentSib.getWeight();// i check if i can "offer" you a better way. my ofer his from the nodes that i stand on and th wighte of this edge.
+                if (offer < tempD.get(currentSib)) { // if its a better way i will put it in the tag.
+                    tempD.put(currentSibkey, offer);
+                    quefodisk.add(currentSibkey);
                 }
             }
-            double ans = Double.POSITIVE_INFINITY;
-            if (g.getNode(dest).getTag() == ans) return -1;
-            return g.getNode(dest).getTag();
         }
+        return tempD;
     }
-*/
+
+
     @Override
     public List<node_data> shortestPath(int src, int dest) {
-        return null;
+        HashMap<Integer, Double> SPD = SPD(src, dest);
+        Stack<node_data> way = new Stack<>();
+        LinkedList<node_data> way2 = new LinkedList<>();
+
+        //dw_graph_algorithms Tgraph=new DWGraph_Algo();
+        directed_weighted_graph graphT = this.copyT();
+        int currentkey = dest;
+        way.push(g.getNode(dest));
+        while (currentkey != src) {
+            for (edge_data sib : graphT.getE(dest)) {
+                int sibKey = sib.getDest();
+                double check = SPD.get(sibKey) + sib.getWeight();
+                if (SPD.get(currentkey) == check) {
+                    currentkey = sibKey;
+                    way.push(g.getNode(sibKey));
+                    break;
+                }
+            }
+        }
+        way.push(g.getNode(src)); // i reverse it with LinkedList.
+        while (!way.empty()) {
+            way2.add(way.pop());
+        }
+        return way2;
     }
 
     @Override
