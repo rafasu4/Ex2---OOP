@@ -138,6 +138,9 @@ class DWGraph_AlgoTest {
         assertEquals(ga1.shortestPathDist(6,5),-1.0);
         assertEquals(ga1.shortestPathDist(1,0),-1.0);
         assertEquals(ga1.shortestPathDist(9,8),-1.0);
+        assertEquals(ga1.shortestPathDist(7,9),2.0);
+        assertEquals(ga1.shortestPathDist(2,5),6.0);
+        assertEquals(ga1.shortestPathDist(8,0),-1.0);
 
     }
 
