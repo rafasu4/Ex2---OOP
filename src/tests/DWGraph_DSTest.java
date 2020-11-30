@@ -1,13 +1,15 @@
 package tests;
 
-import api.*;
+import api.DWGraph_DS;
 import api.edge_data;
 import api.node_data;
 import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DWGraph_DSTest {
 

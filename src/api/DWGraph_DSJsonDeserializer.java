@@ -22,6 +22,7 @@ public class DWGraph_DSJsonDeserializer implements JsonDeserializer<DWGraph_DS> 
             DWGraph_DS.NodeData node = g.new NodeData(nodeKey, nodeWeight);
             g.addNode(node);
         }
+
         //connecting nodes the same way as Json object
         for(Map.Entry<String, JsonElement> set : allNodesObj.entrySet()){
             JsonElement value = set.getValue();
