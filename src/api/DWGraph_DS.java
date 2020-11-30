@@ -1,11 +1,10 @@
 package api;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 public class DWGraph_DS implements directed_weighted_graph {
+    /**Holds the keys of this graph's nodes and their associate node_data object**/
     private HashMap<Integer, node_data> allNodes;
     private int modeCount, edgesCount;
 
@@ -88,7 +87,6 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
 
     @Override
-
     public node_data removeNode(int key) {
         //if the node doesn't exist
         if (!allNodes.containsKey(key)){
@@ -130,6 +128,46 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
 
     @Override
+    /**Override Equals method. Two graphs will considered equal if they have the exact same properties.
+     * @param graph
+     * @return flag
+     */
+    public boolean equals(Object graph){
+        //making sure the input object is weighted_graph object
+        if(!(graph instanceof directed_weighted_graph)){ return false; }
+        directed_weighted_graph g =  (DWGraph_DS) graph;
+        //basic conditions to be equals
+        if(this.edgeSize() != g.edgeSize() || this.nodeSize() != g.nodeSize()){ return false;}
+        boolean flag = true;
+        int[][] thisGraph = new int[this.nodeSize()][2]; //two dimensional array for this graph nodes' keys and weights
+        int[][] gGraph = new int[g.nodeSize()][2]; //two dimensional array for g nodes' keys and weights
+        int i = 0 ;
+        //copying this graph's nodes' keys and weights
+        for (node_data node:this.getV()) {
+            thisGraph[i][0] = node.getKey();
+            thisGraph[i][1] = (int)node.getWeight();
+            i++;
+        }
+        i = 0;
+        //copying g nodes' keys and weights
+        for (node_data node:g.getV()) {
+            gGraph[i][0] = node.getKey();
+            gGraph[i][1] = (int)node.getWeight();
+            i++;
+        }
+        Arrays.sort(thisGraph, Comparator.comparingInt(o -> o[0]));//sorting by first column
+        Arrays.sort(gGraph, Comparator.comparingInt(o -> o[0]));//sorting by first column
+        for (int j = 0; j <this.nodeSize() ; j++) {
+            if(thisGraph[j][0]!=gGraph[j][0] ||  thisGraph[j][1]!=gGraph[j][1]){
+                flag = false;
+            }
+        }
+        //if(flag = false) return false;
+
+        return flag;
+    }
+
+    @Override
     public int nodeSize() {
         return allNodes.size();
     }
@@ -162,6 +200,15 @@ public class DWGraph_DS implements directed_weighted_graph {
             neighbors = new HashMap<>();
             this.info = "";
             this.tag = 0;
+        }
+
+        /**Copy constructor**/
+        public NodeData(node_data n){
+            this.key = n.getKey();
+            this.weight = n.getWeight();
+            neighbors = new HashMap<>();
+            this.info = n.getInfo();
+            this.tag = n.getTag();
         }
 
         @Override
@@ -217,13 +264,17 @@ public class DWGraph_DS implements directed_weighted_graph {
         private int tag;
         private String info;
 
-        /**
-         * Constructor
-         **/
+        /**Constructor**/
         public EdgeData(int src, int dest, double weight) {
             this.src = src;
             this.dest = dest;
             this.weight = weight;
+        }
+
+        public EdgeData(edge_data edge){
+            this.src = edge.getSrc();
+            this.dest = edge.getDest();
+            this.weight = edge.getWeight();
         }
 
         @Override

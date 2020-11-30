@@ -4,7 +4,7 @@ import api.geo_location;
 
 
 /**
- * This class represents a simple world 2 frame conversion (both ways).
+ * This class represents a simple world 2 frame conversion (both wnays).
  * @author boaz.benmoshe
  *
  */
