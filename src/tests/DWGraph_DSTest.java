@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DWGraph_DSTest {
 
@@ -114,6 +113,25 @@ class DWGraph_DSTest {
         assertTrue(g.getEdge(4,6)==null);
         assertTrue(g.getEdge(4,7)==null);
         assertEquals(1, g.edgeSize());
+    }
+
+    @Test
+    public void equals(){
+        DWGraph_DS g = new DWGraph_DS();
+        DWGraph_DS k = new DWGraph_DS();
+        assertEquals(g,k);//vacuously ture
+        for (int i = 0; i < 20; i++) {
+            g.addNode(g.new NodeData(i,i));
+            k.addNode(g.new NodeData(i,i));
+        }
+        assertEquals(g,k);
+        g.connect(1,5,10);
+        g.connect(5,9,3);
+        g.connect(9,5,7);
+        g.connect(4,7,8);
+        assertEquals(g,k);
+
+
 
     }
 }

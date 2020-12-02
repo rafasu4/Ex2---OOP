@@ -62,7 +62,7 @@ public class DWGraph_DS implements directed_weighted_graph {
         if (CaseA) {
             edge_data newEdge = new EdgeData(src, dest, w);// make a new edge
             srcNode.neighbors.put(dest, newEdge);
-            destNode.otherneighbors.put(src, newEdge);
+            destNode.edgesFrom.put(src, newEdge);
             edgesCount++;
             modeCount++;
         }
@@ -73,7 +73,7 @@ public class DWGraph_DS implements directed_weighted_graph {
             if (newWeight) {
                 edge_data newEdge = new EdgeData(src, dest, w);
                 srcNode.neighbors.replace(dest, newEdge);
-                destNode.otherneighbors.put(src, newEdge);
+                destNode.edgesFrom.put(src, newEdge);
                 modeCount++;
             }
         }
@@ -104,7 +104,7 @@ public class DWGraph_DS implements directed_weighted_graph {
         Iterator<edge_data> it = removedNode.neighbors.values().iterator();
         while (it.hasNext()) { // delete from who i connect to.
             NodeData current=(NodeData)getNode(it.next().getDest());
-            current.otherneighbors.remove(key);
+            current.edgesFrom.remove(key);
             edgesCount--;
             modeCount++;
           // a1[i]=it.next().getDest();
@@ -113,7 +113,7 @@ public class DWGraph_DS implements directed_weighted_graph {
        // int j=0;
         //int []a2=new int [removedNode.otherneighbors.size()];
         //removed the edges connected to me .
-        Iterator<edge_data> itOther = removedNode.otherneighbors.values().iterator();
+        Iterator<edge_data> itOther = removedNode.edgesFrom.values().iterator();
         while (itOther.hasNext()) {
             NodeData current=(NodeData)getNode(itOther.next().getSrc());
             current.neighbors.remove(key);
@@ -129,7 +129,7 @@ public class DWGraph_DS implements directed_weighted_graph {
        // }
         modeCount++;
          removedNode.neighbors=new HashMap<>();//it should be empty now
-        removedNode.otherneighbors=new HashMap<>();//it should be empty now
+        removedNode.edgesFrom=new HashMap<>();//it should be empty now
          return removedNode;
     }
 
@@ -148,7 +148,7 @@ public class DWGraph_DS implements directed_weighted_graph {
 
         edge_data removedEdge = srcNode.neighbors.get(dest);
         srcNode.neighbors.remove(dest);
-        destNode.otherneighbors.remove(src);
+        destNode.edgesFrom.remove(src);
 
         edgesCount--;
         modeCount++;
@@ -189,15 +189,42 @@ public class DWGraph_DS implements directed_weighted_graph {
             i++;
         }
 
-        Arrays.sort(thisGraph, Comparator.comparingInt(o -> o[0]));//sorting by first column
-        Arrays.sort(gGraph, Comparator.comparingInt(o -> o[0]));//sorting by first column
+        Arrays.sort(thisGraph, Comparator.comparingInt(o -> o[0]));//sorting by first column - node key
+        Arrays.sort(gGraph, Comparator.comparingInt(o -> o[0]));//sorting by first column - node key
         for (int j = 0; j < this.nodeSize(); j++) {
             if (thisGraph[j][0] != gGraph[j][0] || thisGraph[j][1] != gGraph[j][1]) {
                 flag = false;
             }
         }
-        //if(flag = false) return false;
-
+        //comparing each node neighbor list to its matching node from the other graph
+        for (int j = 0; j <thisGraph.length ; j++) {
+            if(!flag) break;
+            Collection<edge_data> thisP = this.getE(thisGraph[j][0]);
+            double[][] thisNodeNeighbors = new double[thisP.size()][2];
+            i = 0;
+            for(edge_data edge : thisP){
+                thisNodeNeighbors[i][0] = edge.getSrc();
+                thisNodeNeighbors[i][1] = edge.getWeight();
+                i++;
+            }
+            Collection<edge_data> gP = g.getE(thisGraph[j][0]);
+            double[][] gNodeNeighbors = new double[gP.size()][2];
+            i = 0;
+            for(edge_data edge : gP){
+                gNodeNeighbors[i][0] = edge.getSrc();
+                gNodeNeighbors[i][1] = edge.getWeight();
+                i++;
+            }
+            Arrays.sort(thisNodeNeighbors, Comparator.comparingDouble(o -> o[0]));//sorting by first column - node key
+            Arrays.sort(gNodeNeighbors, Comparator.comparingDouble(o -> o[0]));//sorting by first column - node key
+            //comparing each neighbor
+            for (int k = 0; k < gP.size(); k++) {
+                if (thisNodeNeighbors[j][0] != gNodeNeighbors[j][0] || thisNodeNeighbors[j][1] != gNodeNeighbors[j][1]){
+                    flag = false;
+                    break;
+                }
+            }
+        }
         return flag;
     }
 
@@ -226,7 +253,8 @@ public class DWGraph_DS implements directed_weighted_graph {
          * Holds connected neighbor: key - neighbor ID, value - edge_data object that holds edge info.
          **/
         private HashMap<Integer, edge_data> neighbors;
-        private HashMap<Integer, edge_data> otherneighbors;
+        /**Holds all the nodes that have edges to this node: key - neighbor ID, value - edge_data object that holds edge info.**/
+        private HashMap<Integer, edge_data> edgesFrom;
 
 
         /**
@@ -236,7 +264,7 @@ public class DWGraph_DS implements directed_weighted_graph {
             this.key = key;
             this.weight = weight;
             neighbors = new HashMap<>();
-            otherneighbors = new HashMap<>();
+            edgesFrom = new HashMap<>();
             this.info = "";
             this.tag = 0;
         }
