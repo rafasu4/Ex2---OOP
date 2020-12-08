@@ -1,12 +1,21 @@
 package api;
 
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import jdk.jfr.Label;
+import org.w3c.dom.Node;
+
 import java.util.*;
 
 public class DWGraph_DS implements directed_weighted_graph {
     /**
      * Holds the keys of this graph's nodes and their associate node_data object
      **/
+    @Expose
+    private HashSet<edge_data> Edges;
+    @Expose
+    private HashSet<NodeData_Json> Nodes;
     private HashMap<Integer, node_data> allNodes;
     private int modeCount, edgesCount;
 
@@ -16,6 +25,8 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     public DWGraph_DS() {
         allNodes = new HashMap<>();
+        Edges = new HashSet<>();
+        Nodes = new HashSet<>();
         modeCount = 0;
         edgesCount = 0;
 
@@ -46,6 +57,7 @@ public class DWGraph_DS implements directed_weighted_graph {
     public void addNode(node_data n) {
         // if and only if the given node isn't exist in this graph
         if (getNode(n.getKey()) == null) {
+            Nodes.add(new NodeData_Json(n));
             allNodes.put(n.getKey(), n);
             modeCount++;
         }
@@ -55,26 +67,29 @@ public class DWGraph_DS implements directed_weighted_graph {
     //Case B - the edge exits but you need to update the wight.
     //Case C - the edge  exits (do nothing).
     public void connect(int src, int dest, double w) {
-        NodeData srcNode = (NodeData) this.getNode(src);
-        NodeData destNode = (NodeData) this.getNode(dest);
-        boolean CaseA = (getEdge(src, dest) == null);
-        //if there's no edge between the nodes
-        if (CaseA) {
-            edge_data newEdge = new EdgeData(src, dest, w);// make a new edge
-            srcNode.neighbors.put(dest, newEdge);
-            destNode.edgesFrom.put(src, newEdge);
-            edgesCount++;
-            modeCount++;
-        }
-        //if there's existing edge - update it's weight
-        else {
-            boolean newWeight = (getEdge(src, dest).getWeight() != w);
-            //if the new weight isn't the same as current - perform an update
-            if (newWeight) {
-                edge_data newEdge = new EdgeData(src, dest, w);
-                srcNode.neighbors.replace(dest, newEdge);
+        if (!(src == dest)) {
+            NodeData srcNode = (NodeData) this.getNode(src);
+            NodeData destNode = (NodeData) this.getNode(dest);
+            boolean CaseA = (getEdge(src, dest) == null);
+            //if there's no edge between the nodes
+            if (CaseA) {
+                edge_data newEdge = new EdgeData(src, dest, w);// make a new edge
+                Edges.add(newEdge);//add to this graph Edges list
+                srcNode.neighbors.put(dest, newEdge);
                 destNode.edgesFrom.put(src, newEdge);
+                edgesCount++;
                 modeCount++;
+            }
+            //if there's existing edge - update it's weight
+            else {
+                boolean newWeight = (getEdge(src, dest).getWeight() != w);
+                //if the new weight isn't the same as current - perform an update
+                if (newWeight) {
+                    edge_data newEdge = new EdgeData(src, dest, w);
+                    srcNode.neighbors.replace(dest, newEdge);
+                    destNode.edgesFrom.put(src, newEdge);
+                    modeCount++;
+                }
             }
         }
     }
@@ -97,39 +112,36 @@ public class DWGraph_DS implements directed_weighted_graph {
         //if the node doesn't exist
         if (!allNodes.containsKey(key)) return null;
         NodeData removedNode = (NodeData) this.getNode(key);
-
-        //remove all the edge i connect to them.//'
-       // int i=0;
-       // int []a1=new int [removedNode.neighbors.size()];
         Iterator<edge_data> it = removedNode.neighbors.values().iterator();
         while (it.hasNext()) { // delete from who i connect to.
-            NodeData current=(NodeData)getNode(it.next().getDest());
+            NodeData current = (NodeData) getNode(it.next().getDest());
+            edge_data deleteEdge = current.edgesFrom.get(key);
+            Edges.remove(deleteEdge);//remove from graph's edges list
             current.edgesFrom.remove(key);
             edgesCount--;
             modeCount++;
-          // a1[i]=it.next().getDest();
-          // i++;
         }
-       // int j=0;
-        //int []a2=new int [removedNode.otherneighbors.size()];
-        //removed the edges connected to me .
         Iterator<edge_data> itOther = removedNode.edgesFrom.values().iterator();
         while (itOther.hasNext()) {
-            NodeData current=(NodeData)getNode(itOther.next().getSrc());
+            NodeData current = (NodeData) getNode(itOther.next().getSrc());
+            edge_data deleteEdge = current.neighbors.get(key);
+            Edges.remove(deleteEdge);//remove from graph's edges list
             current.neighbors.remove(key);
             edgesCount--;
             modeCount++;
-         //   a2[j]=itOther.next().getSrc();
-          //  j++;
         }
-       // int max=Math.max(i,j);
-       // for (int k = 0; k < max; k++) {
-        //    if (k<i) removeEdge(key,a1[k]);
-       //     if (k<j) removeEdge(a2[k],key);
-       // }
-        modeCount++;
+         modeCount++;
+        Iterator<NodeData_Json> itNodes = Nodes.iterator();
+        while (itNodes.hasNext()){
+            NodeData_Json current = itNodes.next();
+            if(current.id == removedNode.getKey()){
+                it.remove();
+                Nodes.remove(current);
+                break;
+            }
+        }
          removedNode.neighbors=new HashMap<>();//it should be empty now
-        removedNode.edgesFrom=new HashMap<>();//it should be empty now
+         removedNode.edgesFrom=new HashMap<>();//it should be empty now
          return removedNode;
     }
 
@@ -147,9 +159,9 @@ public class DWGraph_DS implements directed_weighted_graph {
         NodeData destNode = (NodeData) this.getNode(dest);
 
         edge_data removedEdge = srcNode.neighbors.get(dest);
+        Edges.remove(removedEdge);//remove from graph's edges list
         srcNode.neighbors.remove(dest);
         destNode.edgesFrom.remove(src);
-
         edgesCount--;
         modeCount++;
         return removedEdge;
@@ -219,7 +231,7 @@ public class DWGraph_DS implements directed_weighted_graph {
             Arrays.sort(gNodeNeighbors, Comparator.comparingDouble(o -> o[0]));//sorting by first column - node key
             //comparing each neighbor
             for (int k = 0; k < gP.size(); k++) {
-                if (thisNodeNeighbors[j][0] != gNodeNeighbors[j][0] || thisNodeNeighbors[j][1] != gNodeNeighbors[j][1]){
+                if (thisNodeNeighbors[k][0] != gNodeNeighbors[k][0] || thisNodeNeighbors[k][1] != gNodeNeighbors[k][1]){
                     flag = false;
                     break;
                 }
@@ -244,11 +256,14 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
 
     public class NodeData implements node_data {
-        private int key;
-        private double weight;
+        @Expose
         private String info;
-        private int tag;
         private geo_location location;
+        @Expose
+        private int id;
+        private double weight;
+        private int tag;
+
         /**
          * Holds connected neighbor: key - neighbor ID, value - edge_data object that holds edge info.
          **/
@@ -260,9 +275,27 @@ public class DWGraph_DS implements directed_weighted_graph {
         /**
          * Constructor
          **/
-        public NodeData(int key, double weight) {
-            this.key = key;
+        public NodeData(int id, double x, double y, double z) {
+            this.id = id;
             this.weight = weight;
+            neighbors = new HashMap<>();
+            edgesFrom = new HashMap<>();
+            location = new Geo_Location(x,y,z);
+            this.info = location.toString();
+            this.tag = 0;
+        }
+        public NodeData(int key, double weight) {
+            this.id = key;
+            this.weight = weight;
+            neighbors = new HashMap<>();
+            edgesFrom = new HashMap<>();
+            this.info = "";
+            this.tag = 0;
+        }
+
+        public NodeData(int key) {
+            this.id = key;
+            this.weight = 0;
             neighbors = new HashMap<>();
             edgesFrom = new HashMap<>();
             this.info = "";
@@ -273,16 +306,17 @@ public class DWGraph_DS implements directed_weighted_graph {
          * Copy constructor
          **/
         public NodeData(node_data n) {
-            this.key = n.getKey();
+            this.id = n.getKey();
             this.weight = n.getWeight();
             neighbors = new HashMap<>();
+            edgesFrom=new HashMap<>();
             this.info = n.getInfo();
             this.tag = n.getTag();
         }
 
         @Override
         public int getKey() {
-            return key;
+            return id;
         }
 
         @Override
@@ -292,7 +326,7 @@ public class DWGraph_DS implements directed_weighted_graph {
 
         @Override
         public void setLocation(geo_location p) {
-            location = new Geo_Location(p);
+            location = p;
         }
 
         @Override
@@ -327,9 +361,13 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
 
     public class EdgeData implements edge_data {
-        private int src;
-        private int dest;
-        private double weight;
+        @Expose
+        private final int src;
+        @Expose
+        @SerializedName("w")
+        private final double weight;
+        @Expose
+        private final int dest;
         private int tag;
         private String info;
 
@@ -385,7 +423,9 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
 
     public class Geo_Location implements geo_location {
-        private double x, y, z;
+        private double x;
+        private double y;
+        private double z;
 
 
         public Geo_Location(double x, double y, double z) {
@@ -395,6 +435,7 @@ public class DWGraph_DS implements directed_weighted_graph {
 
         }
 
+        /**Copy constructor**/
         public Geo_Location(geo_location p) {
             this.x = p.x();
             this.y = p.y();
@@ -417,11 +458,31 @@ public class DWGraph_DS implements directed_weighted_graph {
         }
 
         @Override
-        public double distance(geo_location g) {
-            double xd = Math.pow(x - g.x(), 2);
-            double yd = Math.pow(y - g.y(), 2);
-            double zd = Math.pow(z - g.z(), 2);
-            return Math.sqrt(xd + yd + zd);
+        public double distance(geo_location p2) {
+            double dx = this.x() - p2.x();
+            double dy = this.y() - p2.y();
+            double dz = this.z() - p2.z();
+            double t = (dx*dx+dy*dy+dz*dz);
+            return Math.sqrt(t);
+        }
+
+        @Override
+        public String toString(){
+            String ans = "";
+            ans+=this.x+","+this.y+","+this.z;
+            return ans;
+        }
+
+    }
+    public class NodeData_Json{
+        @Expose
+        private String pos;
+        @Expose
+        private int id;
+
+        public NodeData_Json(node_data n){
+            pos = n.getLocation().x()+","+n.getLocation().y()+","+n.getLocation().z();
+            id = n.getKey();
         }
     }
 

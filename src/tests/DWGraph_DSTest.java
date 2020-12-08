@@ -129,6 +129,17 @@ class DWGraph_DSTest {
         g.connect(5,9,3);
         g.connect(9,5,7);
         g.connect(4,7,8);
+        assertNotEquals(g,k);
+        k.connect(1,5,10);
+        k.connect(5,9,3);
+        k.connect(9,5,7);
+        k.connect(4,7,8);
+        assertEquals(g,k);
+        g.removeNode(5);
+        k.removeNode(2);
+        assertNotEquals(g,k);
+        g.removeNode(2);
+        k.removeNode(5);
         assertEquals(g,k);
 
 

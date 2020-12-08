@@ -63,7 +63,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         //building edges in the copy graph, the same way as th original
         for (node_data node : pointer) {
             for (edge_data edge : this.g.getE(node.getKey())) {
-                newGraph.connect(edge.getDest(), node.getKey(), edge.getWeight());
+                newGraph.connect(edge.getDest(), edge.getSrc(), edge.getWeight());
             }
         }
         return newGraph;
@@ -77,9 +77,9 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         queforbfs.add(src);
         while (!(queforbfs.isEmpty())) {
             Integer thisNode = queforbfs.poll();
-            for (edge_data thisSi : g.getE(src)) {
+            for (edge_data thisSi : g.getE(thisNode)) {
                 node_data thisSib = this.g.getNode(thisSi.getDest());
-                if (thisSib.getTag() == 0) {
+                if (thisSib.getTag() == 0 && (thisSib.getKey() != src)) {
                     thisSib.setTag(1);
                     queforbfs.add(thisSib.getKey());
                     numOfVisits++;
@@ -92,6 +92,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     @Override
     public boolean isConnected() {
+        if (g.nodeSize() < 1) return true;
         int firstNode = g.getV().iterator().next().getKey();
         directed_weighted_graph graphT = this.copyT();
         directed_weighted_graph graph = getGraph();
@@ -106,6 +107,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     @Override
     public double shortestPathDist(int src, int dest) {
         HashMap<Integer, Double> SPD = SPD(src, dest);
+        double inf = Double.POSITIVE_INFINITY;
+        if (SPD.get(dest)==inf)return -1;
         return SPD.get(dest);
 
     }
@@ -130,8 +133,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             node_data currentNode = g.getNode(currentkey);
             for (edge_data currentSib : g.getE(currentkey)) {
                 int currentSibkey = currentSib.getDest();
-                double offer = tempD.get(currentkey) + currentSib.getWeight();// i check if i can "offer" you a better way. my ofer his from the nodes that i stand on and th wighte of this edge.
-                if (offer < tempD.get(currentSib)) { // if its a better way i will put it in the tag.
+                double offer = tempD.get(currentkey) + currentSib.getWeight();//
+                if (offer < tempD.get(currentSibkey)) { // if its a better way i will put it in the tag.
                     tempD.put(currentSibkey, offer);
                     quefodisk.add(currentSibkey);
                 }
@@ -144,6 +147,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     @Override
     public List<node_data> shortestPath(int src, int dest) {
         HashMap<Integer, Double> SPD = SPD(src, dest);
+        if (SPD.get(dest)==-1)return null;
         Stack<node_data> way = new Stack<>();
         LinkedList<node_data> way2 = new LinkedList<>();
 
@@ -174,7 +178,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         boolean flag = false;
         try {
             PrintWriter pw = new PrintWriter(new File(file + ".json"));
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
             String json = gson.toJson(this.g);
             pw.write(json);
             pw.close();
@@ -185,6 +189,18 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return flag;
     }
 
+    public boolean saveAgent(String file){
+        boolean flag = false;
+        try{
+            PrintWriter pw = new PrintWriter(new File(file+".json"));
+            pw.write(file);
+            pw.close();
+            flag = true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
 
     @Override
     public boolean load(String file) {

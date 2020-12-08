@@ -5,18 +5,17 @@ import java.util.Collection;
 public class Main {
     public static void main(String[] args) {
         DWGraph_DS g = new DWGraph_DS();
-        DWGraph_DS k = new DWGraph_DS();
-        for (int i = 0; i <10 ; i++) {
-            g.addNode(g.new NodeData(i,i));
-            k.addNode(g.new NodeData(i,i));
+        for (int i = 0; i <= 5; i++) {
+            node_data n = g.new NodeData(i, i, i, i);
+            g.addNode(n);
         }
-        g.connect(1,3,3);
-        g.connect(1,4,5);
-        k.connect(1,3,3);
-        k.connect(1,4,5);
-        System.out.println(g.equals(k
-        ));
-        System.out.println(g.getMC());
-        System.out.println(k.getMC());
+        g.connect(1, 2, 2);
+        g.connect(5, 3, 7);
+        g.connect(2, 3, 3);
+        DWGraph_Algo k = new DWGraph_Algo();
+        k.init(g);
+        System.out.println(k.save("data"));
+        System.out.println(k.load("data"));
+        System.out.println(k.save("data2"));
     }
 }
