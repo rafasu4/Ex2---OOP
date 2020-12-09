@@ -135,11 +135,10 @@ public class Ex2 implements Runnable  {
             ArrayList<CL_Pokemon> cl_fs = Arena.json2Pokemons(game.getPokemons());
             //updating each pokemon edge location
             for(int a = 0;a<cl_fs.size();a++) { Arena.updateEdge(cl_fs.get(a),gg); }
-            cl_fs = Arena.json2Pokemons(game.getPokemons());
             int a = 0;
             int i = 0;
             for(;a<numberOfAgents;a++) {
-                Iterator<CL_Pokemon> itPok = _ar.getPokemons().iterator();
+                Iterator<CL_Pokemon> itPok = cl_fs.iterator();
                 if (itPok.hasNext())
                     while (itPok.hasNext()) {
                         CL_Pokemon current = itPok.next();
