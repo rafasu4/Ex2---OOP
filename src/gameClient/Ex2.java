@@ -24,7 +24,7 @@ public class Ex2 implements Runnable  {
 
     @Override
     public void run() {
-        game_level = 0;
+        game_level = 1;
         game_service game = Game_Server_Ex2.getServer(game_level);
         String graph = game.getGraph();
         directed_weighted_graph gg = deserializer(graph); //game.getJava_Graph_Not_to_be_used();
@@ -139,26 +139,14 @@ public class Ex2 implements Runnable  {
             int i = 0;
             for(;a<numberOfAgents;a++) {
                 Iterator<CL_Pokemon> itPok = cl_fs.iterator();
-                if (itPok.hasNext())
                     while (itPok.hasNext()) {
                         CL_Pokemon current = itPok.next();
+                        current = itPok.next();
                         if (!current.isLockedIn()) {
                             current.setLockedIn(true);
-                            int startingNode;
-                            if (current.getType() < 0) {
-                                startingNode = Math.max(current.get_edge().getSrc(), current.get_edge().getDest());
-                                game.addAgent(startingNode);
-                                game.chooseNextEdge(i, Math.min(current.get_edge().getSrc(), current.get_edge().getDest()));
-                                i++;
-                                break;
-                            }
-                            else{
-                                startingNode = Math.min(current.get_edge().getSrc(), current.get_edge().getDest());
-                                game.addAgent(startingNode);
-                                game.chooseNextEdge(i, Math.max(current.get_edge().getSrc(), current.get_edge().getDest()));
-                                i++;
-                                break;
-                            }
+                            edge_data e = current.get_edge();
+                            game.addAgent(e.getSrc());
+                            game.chooseNextEdge(i, e.getDest());
                         }
                     }
             }
