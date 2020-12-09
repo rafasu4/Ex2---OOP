@@ -32,12 +32,11 @@ public class Ex2_Client implements Runnable{
 		String pks = game.getPokemons();
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
 		init(game);
-		
 		game.startGame();
 		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
 		int ind=0;
 		long dt=100;
-		
+
 		while(game.isRunning()) {
 			moveAgants(game, gg);
 			try {

@@ -8,6 +8,7 @@ public class CL_Pokemon {
 	private double _value;
 	private int _type;
 	private Point3D _pos;
+	private boolean lockedIn;
 	private double min_dist;
 	private int min_ro;
 	
@@ -16,6 +17,7 @@ public class CL_Pokemon {
 	//	_speed = s;
 		_value = v;
 		set_edge(e);
+		lockedIn = false;
 		_pos = p;
 		min_dist = -1;
 		min_ro = -1;
@@ -40,6 +42,9 @@ public class CL_Pokemon {
 	public void set_edge(edge_data _edge) {
 		this._edge = _edge;
 	}
+
+	public void setLockedIn(boolean c){ this.lockedIn = c;}
+	public boolean isLockedIn(){ return lockedIn;}
 
 	public Point3D getLocation() {
 		return _pos;

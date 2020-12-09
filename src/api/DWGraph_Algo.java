@@ -189,19 +189,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return flag;
     }
 
-    public boolean saveAgent(String file){
-        boolean flag = false;
-        try{
-            PrintWriter pw = new PrintWriter(new File(file+".json"));
-            pw.write(file);
-            pw.close();
-            flag = true;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return flag;
-    }
-
     @Override
     public boolean load(String file) {
         boolean flag = false;
