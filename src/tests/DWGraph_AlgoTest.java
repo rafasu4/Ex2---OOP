@@ -4,8 +4,8 @@ import api.*;
 import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
-import api.DWGraph_DS;
-import api.node_data;
+
+
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -141,6 +141,15 @@ class DWGraph_AlgoTest {
         assertEquals(ga1.shortestPathDist(7,9),2.0);
         assertEquals(ga1.shortestPathDist(2,5),6.0);
         assertEquals(ga1.shortestPathDist(8,0),-1.0);
+        // 5 nodes
+        a=(GcreatorRandom(5,0));
+        a.connect(0,1,1.0);
+        a.connect(1,2,1.0);
+        a.connect(2,3,1.0);
+        a.connect(3,4,1.0);
+        a.connect(0,4,3.0);
+        ga1.init(a);
+        assertEquals(ga1.shortestPathDist(0,4),3);
 
     }
 
