@@ -24,10 +24,12 @@ public class MyFrame extends JFrame{
 	private int _ind;
 	private Arena _ar;
 	private gameClient.util.Range2Range _w2f;
+
 	MyFrame(String a) {
 		super(a);
 		int _ind = 0;
 	}
+
 	public void update(Arena ar) {
 		this._ar = ar;
 		updateFrame();
@@ -49,7 +51,6 @@ public class MyFrame extends JFrame{
 		drawGraph(g);
 		drawAgants(g);
 		drawInfo(g);
-		
 	}
 	private void drawInfo(Graphics g) {
 		List<String> str = _ar.get_info();

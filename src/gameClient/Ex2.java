@@ -5,21 +5,36 @@ import Server.Game_Server_Ex2;
 import api.game_service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import gameClient.util.MyLabel;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class Ex2 implements Runnable  {
-    private static MyFrame _win;
+public class Ex2 implements Runnable, ActionListener {
+    private static GuiFrame _win;
     private static Arena _ar;
     private static int game_level;
     private static dw_graph_algorithms k = new DWGraph_Algo();
+    private static JTextField tf;
+    private static JFrame f = new JFrame();
+    private static JPanel p = new JPanel();
+    private static MyLabel scene;
+    private static MyLabel id;
+    private static MyLabel comment;
+    private static Thread client;
+
     public static void main(String[] a) {
-        Thread client = new Thread(new Ex2());
-        client.start();
+        client = new Thread(new Ex2());
+        startMenu();
+        //client.start();
     }
 
     @Override
@@ -31,16 +46,19 @@ public class Ex2 implements Runnable  {
         String pokemon = game.getPokemons();
         System.out.println(pokemon);
         System.out.println(game.toString());
-       /**/// game.addAgent(0);
+        SimplePlayer play = new SimplePlayer("resources/Pokemon theme song.mp3");
+        Thread player = new Thread(play);
+        player.start();
         init(game);
         game.startGame();
-        _win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
+//        _win.setTitle("Ex2 - OOP: Gotta Catch 'Em All!");
         int ind=0;
         long dt=100;
         while(game.isRunning()){
             moveAgents(game, gg);
             try {
-                if(ind%1==0) {_win.repaint();}
+                if(ind%1==0) {
+                    _win.setCurrentTime(game.timeToEnd()); }
                 Thread.sleep(dt);
                 ind++;
             }
@@ -56,6 +74,7 @@ public class Ex2 implements Runnable  {
         //game.stopGame();
 
     private static void moveAgents(game_service game, directed_weighted_graph gg) {
+        _win.repaint();
         String lg = game.move();
         List<CL_Agent> log = Arena.getAgents(lg, gg);
         _ar.setAgents(log);
@@ -119,10 +138,11 @@ public class Ex2 implements Runnable  {
         _ar = new Arena();
         _ar.setGraph(gg);
         _ar.setPokemons(Arena.json2Pokemons(fs));
-        _win = new MyFrame("test Ex2");
+        _win = new GuiFrame(game);
         _win.setSize(1000, 700);
-        _win.update(_ar);
-        _win.show();
+        _win.initPanel();
+        _win.update(_ar, game);
+        //_win.show();
         String info = game.toString();
         JSONObject line;
         try {
@@ -178,5 +198,52 @@ public class Ex2 implements Runnable  {
             return null;
         }
         return g;
+    }
+
+    public static void chooseLevel(int level){
+        game_level = level;
+    }
+
+    public static void startMenu(){
+        f.setSize(220, 175);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        f.setLocation(dim.width/2-f.getSize().width/2, dim.height/2-f.getSize().height/2);
+        f.setDefaultCloseOperation(MyFrame.EXIT_ON_CLOSE);
+        f.add(p);
+        p.setLayout(null);
+        id = new MyLabel("User ID:");
+        id.getJText().setBounds(100,20,80,25);
+        id.setBounds(10,20,80,25);
+        p.add(id.getJText());
+        p.add(id);
+
+        scene = new MyLabel("Scenario:");
+        scene.setBounds(10,50,80,25);
+        scene.getJText().setBounds(100,50,80,25);
+        p.add(scene);
+        p.add(scene.getJText());
+
+        JButton button = new JButton("Enter");
+        button.setBounds(10,80,70,25);
+        button.addActionListener(new Ex2());
+        p.add(button);
+
+        comment = new MyLabel("");
+        comment.setBounds(10,110,300,25);
+        p.add(comment);
+        f.setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        int scenario = Integer.parseInt(scene.getJText().getText());
+        if(scenario<0 || scenario>23){
+            comment.setText("Level must be between 0-23!");
+            System.out.println(comment.getText());
+        }
+        else{
+            game_level = scenario;
+            client.start();
+        }
     }
 }

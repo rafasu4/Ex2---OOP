@@ -51,5 +51,6 @@
         <jarDirectory url="file://$MODULE_DIR$/libs" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jlayer-1.0.1" level="project" />
   </component>
 </module>
