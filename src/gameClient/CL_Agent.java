@@ -7,6 +7,8 @@ import api.node_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
+import java.util.*;
+
 public class CL_Agent {
 		public static final double EPS = 0.0001;
 		private static int _count = 0;
@@ -20,10 +22,20 @@ public class CL_Agent {
 		private directed_weighted_graph _gg;
 		private CL_Pokemon _curr_fruit;
 		private long _sg_dt;
-		
 		private double _value;
+		private Queue<Integer> listTarget= new LinkedList<>();
 		
-		
+
+		public void MakeQuene (List<node_data> l){
+			Iterator <node_data> it = l.iterator();
+			while(it.hasNext()){
+				listTarget.add(it.next().getKey());
+			}
+		}
+		public int getNext(){
+			if(listTarget.isEmpty())return -1;
+			return listTarget.poll();
+		}
 		public CL_Agent(directed_weighted_graph g, int start_node) {
 			_gg = g;
 			setMoney(0);
