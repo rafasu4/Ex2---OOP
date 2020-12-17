@@ -106,48 +106,76 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     @Override
     public double shortestPathDist(int src, int dest) {
-        HashMap<Integer, Double> SPD = SPD(src, dest);
+        HashMap<Integer, Double> SPD = shortestPathHash(src, dest);
         double inf = Double.POSITIVE_INFINITY;
-        if (SPD.get(dest)==inf)return -1;
+        if (SPD.get(dest) == inf) return -1;
         return SPD.get(dest);
 
     }
 
-    private HashMap<Integer, Double> SPD(int src, int dest) {
-
+    private HashMap<Integer, Double> shortestPathHash(int src, int dest) {
         //setting for the  algorytem
         double inf = Double.POSITIVE_INFINITY;
-        HashMap<Integer, Double> tempD = new HashMap<>();
+        PriorityQueue<DWGraph_DS.NodeForHeap> q = new PriorityQueue<>();
+        Queue<Integer> quefodisk = new LinkedList<>();
+        HashMap<Integer, DWGraph_DS.NodeForHeap> HashOfDis = new HashMap<>();
+        HashMap<Integer, Double> toReturn = new HashMap<>();
+        g.getNode(src).setTag(0);
+        // all nodes init
         for (node_data thisnode : this.g.getV()) {
-            tempD.put(thisnode.getKey(), inf);
+            if (thisnode.getKey() != src) {
+                int keyNode = thisnode.getKey();
+                //DWGraph_DS.NodeForHeap current = new DWGraph_DS.NodeForHeap(thisnode, inf);
+                // q.add(current);
+                // HashOfDis.put(keyNode, current);
+                toReturn.put(keyNode, inf);
+                thisnode.setTag(0);
+            }
         }
 
-        node_data node1 = g.getNode(src);
-        node_data node2 = g.getNode(dest);
-        tempD.put(src, 0.0);
-        Queue<Integer> quefodisk = new LinkedList<>();
+
+        //src node init
+        DWGraph_DS.NodeForHeap srcNodeHeap = new DWGraph_DS.NodeForHeap(g.getNode(src), 0.0);
+        q.add(srcNodeHeap);
+        HashOfDis.put(src, srcNodeHeap);
+        toReturn.put(src, 0.0);
+        double updatedDis = 0;
         // starting to "walk"
-        quefodisk.add(src);
-        while (!quefodisk.isEmpty()) {
-            int currentkey = quefodisk.poll();
-            node_data currentNode = g.getNode(currentkey);
-            for (edge_data currentSib : g.getE(currentkey)) {
-                int currentSibkey = currentSib.getDest();
-                double offer = tempD.get(currentkey) + currentSib.getWeight();//
-                if (offer < tempD.get(currentSibkey)) { // if its a better way i will put it in the tag.
-                    tempD.put(currentSibkey, offer);
-                    quefodisk.add(currentSibkey);
+        while (!(q.isEmpty())) {
+            DWGraph_DS.NodeForHeap peekNodeHeap = q.peek();
+            DWGraph_DS.NodeForHeap currentNodeHeap = q.poll();
+            if (currentNodeHeap.getNode().getTag() == 0) {
+                int currentKey = currentNodeHeap.getKey();//if first round src should fall
+                node_data currentNode = currentNodeHeap.getNode();
+                currentNode.setTag(1);
+// move over the edges
+                for (edge_data currentEdge : g.getE(currentKey)) {
+                    //settings
+                    int currentSibkey = currentEdge.getDest();
+                    node_data sibNode = g.getNode(currentSibkey);
+                    //action
+                    double offer = toReturn.get(currentKey) + currentEdge.getWeight();
+                    updatedDis = toReturn.get(currentSibkey);
+                    if (offer < updatedDis) { // if its a better way i will put it in the tag.
+                        // HashOfDis.get(currentSibkey).setDis(offer);
+                        updatedDis = offer;
+                        toReturn.put(currentSibkey,updatedDis);
+                        DWGraph_DS.NodeForHeap current = new DWGraph_DS.NodeForHeap(sibNode, updatedDis);//i update to the heap
+                        q.add(current);
+                    }
+
                 }
             }
         }
-        return tempD;
+        return toReturn;
     }
 
 
     @Override
     public List<node_data> shortestPath(int src, int dest) {
-        HashMap<Integer, Double> SPD = SPD(src, dest);
-        if (SPD.get(dest)==-1)return null;
+        double inf = Double.POSITIVE_INFINITY;
+        if (shortestPathDist(src, dest) == -1) return null;// if there no way return null. inf repesents there is no way
+        HashMap<Integer, Double> hashAllShortD = shortestPathHash(src, dest);
         Stack<node_data> way = new Stack<>();
         LinkedList<node_data> way2 = new LinkedList<>();
 
@@ -156,10 +184,12 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         int currentkey = dest;
         way.push(g.getNode(dest));
         while (currentkey != src) {
-            for (edge_data sib : graphT.getE(dest)) {
+            double myShortD = hashAllShortD.get(currentkey);
+            for (edge_data sib : graphT.getE(currentkey)) {
                 int sibKey = sib.getDest();
-                double check = SPD.get(sibKey) + sib.getWeight();
-                if (SPD.get(currentkey) == check) {
+                double sibShortD = hashAllShortD.get(sibKey);
+                double edgeWight = sib.getWeight();
+                if (myShortD == sibShortD + edgeWight) {
                     currentkey = sibKey;
                     way.push(g.getNode(sibKey));
                     break;

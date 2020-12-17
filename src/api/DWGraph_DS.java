@@ -4,6 +4,7 @@ package api;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import jdk.jfr.Label;
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Node;
 
 import java.util.*;
@@ -255,7 +256,9 @@ public class DWGraph_DS implements directed_weighted_graph {
         return modeCount;
     }
 
-    public class NodeData implements node_data {
+    public class NodeData implements node_data  {
+
+
         @Expose
         private String info;
         private geo_location location;
@@ -358,6 +361,9 @@ public class DWGraph_DS implements directed_weighted_graph {
         public void setTag(int t) {
             this.tag = t;
         }
+
+
+
     }
 
     public class EdgeData implements edge_data {
@@ -481,11 +487,39 @@ public class DWGraph_DS implements directed_weighted_graph {
         private int id;
 
         public NodeData_Json(node_data n){
-            pos = n.getLocation().x()+","+n.getLocation().y()+","+n.getLocation().z();
+            if (n.getLocation()!=null) pos = n.getLocation().x()+","+n.getLocation().y()+","+n.getLocation().z();
             id = n.getKey();
         }
     }
+    public static class NodeForHeap implements Comparable{
+        double dis;
+        node_data node;
 
+        public NodeForHeap (node_data node,double dis){
+            this.node=node;
+            this.dis=dis;
+        }
+        public double getDis (){
+            return dis;
+        }
+        public int getKey (){
+            return node.getKey();
+        }
+        public node_data getNode (){
+            return node;
+        }
+        public void setDis (double updateddis){
+             dis=updateddis;
+        }
+
+        @Override
+        public int compareTo(@NotNull Object o) {
+            NodeForHeap other =(NodeForHeap)o;
+            if (dis>other.dis)return 1;
+            if (dis<other.dis)return -1;
+            return 0;
+        }
+    }
 }
 
 

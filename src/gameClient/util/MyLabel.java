@@ -1,11 +1,11 @@
 package gameClient.util;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class MyLabel extends JLabel {
      private  JTextField tf;
-     private  ImageIO im;
+
+
 
      public MyLabel(String s){
          super(s);
@@ -16,8 +16,26 @@ public class MyLabel extends JLabel {
          return tf;
      }
 
-    public ImageIO getIm(){
-        return im;
+     public class GuiLabel extends JFrame{
+         JTextField ta;
+         private JLabel l;
+
+         public GuiLabel(){
+             l = new JLabel("Time: ");
+             l.setBounds(10,10,100,35);
+             this.add(l);
+             this.setSize(200,400);
+             this.setLayout(null);
+             this.setVisible(true);
+             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         }
+
+     }
+
+
+    public static void main(String[] args) {
+         MyLabel l = new MyLabel("");
+        GuiLabel lg = l.new GuiLabel();
     }
 
 }

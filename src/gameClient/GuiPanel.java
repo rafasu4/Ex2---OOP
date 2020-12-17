@@ -37,10 +37,13 @@ public class GuiPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        int w = dimension.width;
-        int h = dimension.height;
-        g.clearRect(0, 0, w, h);
+        JLabel hud = new JLabel("Remaining Time: ");
+        hud.setBounds(10,10,100,35);
+        this.add(hud);
+//        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+//        int w = dimension.width;
+//        int h = dimension.height;
+        //g.clearRect(0, 0, w, h);
         drawPokemons(g);
         drawGraph(g);
         drawAgents(g);
@@ -89,9 +92,6 @@ public class GuiPanel extends JPanel {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                 //   g.drawImage(bi,(int)fp.x()-r, (int)fp.y()-r, null );//g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
-                    //	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
-
                 }
             }
         }
@@ -107,7 +107,13 @@ public class GuiPanel extends JPanel {
             i++;
             if(c!=null) {
                 geo_location fp = myFrame.get_w2f().world2frame(c);
-                g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
+                String path = "resources/001.jpg";
+                try {
+                    BufferedImage bi = ImageIO.read(new File(path));
+                    g.drawImage(bi, (int)fp.x()-r, (int)fp.y(),null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

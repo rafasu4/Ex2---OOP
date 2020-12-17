@@ -1,10 +1,8 @@
 package gameClient;
 
-import api.directed_weighted_graph;
 import api.game_service;
-import gameClient.util.Range;
-import gameClient.util.Range2D;
 import gameClient.util.Range2Range;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -37,8 +35,8 @@ public class GuiFrame extends JFrame{
         GuiPanel myPanel = new GuiPanel(this);
         Dimension dim = this.getSize();
         this.setPanel(myPanel);
-        myPanel.setSize(dim.width, dim.height);
-        this.add(myPanel, BorderLayout.CENTER);
+       // myPanel.setSize(dim.width, dim.height);
+        //this.add(myPanel, BorderLayout.CENTER);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
 
@@ -60,6 +58,8 @@ public class GuiFrame extends JFrame{
     public Arena get_ar() {
         return _ar;
     }
+
+    public game_service getGame(){ return game;}
 
     public void set_w2f(Range2Range r) {
         this._w2f = r;
