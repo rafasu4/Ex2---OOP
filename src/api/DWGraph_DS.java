@@ -3,12 +3,14 @@ package api;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import jdk.jfr.Label;
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Node;
 
 import java.util.*;
 
+/**
+ * This class represents a directional weighted graph.
+ * Each graph builds from nodes that are connected by edges objects. Implements directed_weighted_graph interface.
+ */
 public class DWGraph_DS implements directed_weighted_graph {
     /**
      * Holds the keys of this graph's nodes and their associate node_data object
@@ -256,9 +258,10 @@ public class DWGraph_DS implements directed_weighted_graph {
         return modeCount;
     }
 
+    /**This class represents a node in a graph. Each node has its own weight, id and location in a 2 dimensional
+     * space. Inner class in DWGraph_DS. Implements node_data interface.
+     */
     public class NodeData implements node_data  {
-
-
         @Expose
         private String info;
         private geo_location location;
@@ -366,6 +369,9 @@ public class DWGraph_DS implements directed_weighted_graph {
 
     }
 
+    /**This class represents an edge in a graph.
+    Each EdgeData object has a source and destination node and weight. Inner class in DWGraph_DS. Implements of edge_data interface.
+     */
     public class EdgeData implements edge_data {
         @Expose
         private final int src;
@@ -378,18 +384,12 @@ public class DWGraph_DS implements directed_weighted_graph {
         private String info;
 
         /**
-         * Constructor
+         *Constructor
          **/
         public EdgeData(int src, int dest, double weight) {
             this.src = src;
             this.dest = dest;
             this.weight = weight;
-        }
-
-        public EdgeData(edge_data edge) {
-            this.src = edge.getSrc();
-            this.dest = edge.getDest();
-            this.weight = edge.getWeight();
         }
 
         @Override
@@ -428,6 +428,10 @@ public class DWGraph_DS implements directed_weighted_graph {
         }
     }
 
+    /**A Geo_Location object has 3 parameters: x, y, and z. this parameters
+     * help locating a node in the 3 dimensional space (in this assignment, 2 dimensional space). Inner class in DWGraph_DS.
+     * Implements geo_location interface.
+     */
     public class Geo_Location implements geo_location {
         private double x;
         private double y;

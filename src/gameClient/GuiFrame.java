@@ -4,61 +4,48 @@ import api.game_service;
 import gameClient.util.Range2Range;
 
 import javax.swing.*;
-import java.awt.*;
 
 
-
+/**This class represents a specific adapted JFrame to this project.**/
 public class GuiFrame extends JFrame{
     private Arena _ar;
     private gameClient.util.Range2Range _w2f;
     private GuiPanel myPanel;
-    private long currentTime;
     private game_service game;
 
-    public long getCurrentTime(){return currentTime;}
-    public void setCurrentTime(long currentTime) {
-        this.currentTime = currentTime;
-    }
-
+    /**Constructor
+     * @param game - server.
+     */
     public GuiFrame(game_service game) {
         super();
         this.game = game;
-        this.setTitle("Ex2 - OOP: Gotta Catch 'Em All!");
     }
 
-    public GuiFrame(){
-        super();
-    }
-
-
+    /**Adds a proper panel to this GuiFrame.
+     */
     public void initPanel(){
         GuiPanel myPanel = new GuiPanel(this);
-        Dimension dim = this.getSize();
         this.setPanel(myPanel);
-       // myPanel.setSize(dim.width, dim.height);
-        //this.add(myPanel, BorderLayout.CENTER);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
 
     }
 
-
-    public void update(Arena _ar, game_service game) {
+    public void update(Arena _ar) {
         this._ar = _ar;
-        this.myPanel.updateFrame(game);
+        this.myPanel.updateFrame();
     }
 
-
-
-//
-//    public void paint(Graphics g) {
-//        this.myPanel.paint(g);
-//    }
-
+    /**Returns the info about of the agents in this level.
+     * @return _ar - Arena object
+     */
     public Arena get_ar() {
         return _ar;
     }
 
+    /**Returns the game server which in play.
+     * @return game - game_service obfect
+     */
     public game_service getGame(){ return game;}
 
     public void set_w2f(Range2Range r) {
@@ -73,8 +60,6 @@ public class GuiFrame extends JFrame{
         this.myPanel = myPanel;
     }
 
-    public JPanel getPanel() {
-        return myPanel;
-    }
+    public GuiPanel getPanel() { return myPanel; }
 
 }

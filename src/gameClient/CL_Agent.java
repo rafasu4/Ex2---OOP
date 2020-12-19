@@ -6,15 +6,12 @@ import api.geo_location;
 import api.node_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
-
 import java.util.*;
 
+/**This class represents an agent that runs on the graph.
+ */
 public class CL_Agent {
-    public static final double EPS = 0.0001;
-    private static int _count = 0;
-    private static int _seed = 3331;
     private int _id;
-    //	private long _key;
     private geo_location _pos;
     private double _speed;
     private edge_data _curr_edge;
@@ -26,20 +23,20 @@ public class CL_Agent {
     private Queue<Integer> listTarget = new LinkedList<>();
     boolean aStepAhead = false;
 
-    public boolean Step() {
-        return aStepAhead;
-    }
+//    public boolean Step() {
+//        return aStepAhead;
+//    }
 
     public void setStep(boolean b) {
         aStepAhead = b;
     }
 
-    public void MakeQuene(List<node_data> l) {
-        Iterator<node_data> it = l.iterator();
-        while (it.hasNext()) {
-            listTarget.add(it.next().getKey());
-        }
-    }
+//    public void MakeQuene(List<node_data> l) {
+//        Iterator<node_data> it = l.iterator();
+//        while (it.hasNext()) {
+//            listTarget.add(it.next().getKey());
+//        }
+//    }
 
     public int getNext() {
         if (listTarget.isEmpty()) return -1;
@@ -58,7 +55,6 @@ public class CL_Agent {
     public void update(String json) {
         JSONObject line;
         try {
-            // "GameServer":{"graph":"A0","pokemons":3,"agents":1}}
             line = new JSONObject(json);
             JSONObject ttt = line.getJSONObject("Agent");
             int id = ttt.getInt("id");
@@ -83,7 +79,6 @@ public class CL_Agent {
         }
     }
 
-    //@Override
     public int getSrcNode() {
         return this._curr_node.getKey();
     }

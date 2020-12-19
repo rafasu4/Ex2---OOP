@@ -11,13 +11,12 @@ import gameClient.util.Range2Range;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * This class represents a multi Agents Arena which move on a graph - grabs Pokemons and avoid the Zombies.
+ * This class represents a multi Agents Arena which move on a graph and grabs Pokemons. Given class from OOP course.
  * @author boaz.benmoshe
  *
  */

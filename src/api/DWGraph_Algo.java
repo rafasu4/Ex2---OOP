@@ -2,10 +2,13 @@ package api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.io.*;
 import java.util.*;
 
+/**This class holds a collection of more complex methods for DWGraph_DS object.
+ * To run a method, one must creat a DWGraph_Algo instance, and initiating it with DWGraph_DS object using init method.
+ * Implements dw_graph_algorithms interface.
+ */
 public class DWGraph_Algo implements dw_graph_algorithms {
     private directed_weighted_graph g;
 
