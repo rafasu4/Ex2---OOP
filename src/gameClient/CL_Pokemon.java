@@ -14,10 +14,6 @@ public class CL_Pokemon {
 	private double min_dist;
 	private int min_ro;
 
-
-
-
-	
 	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
 		_type = t;
 	//	_speed = s;

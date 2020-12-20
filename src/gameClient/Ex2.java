@@ -28,10 +28,7 @@ public class Ex2 implements Runnable, ActionListener {
     private static MyLabel id;
     private static Thread client;
     private static long user_id;
-    private static long start = 0;
     private static long dt1 = 0;
-    private static int countMoves = 0;
-    private CL_Agent Agent = null;
 
     public static void main(String[] args) {
         client = new Thread(new Ex2());
@@ -50,7 +47,7 @@ public class Ex2 implements Runnable, ActionListener {
     public void run() {
         game_service game = Game_Server_Ex2.getServer(game_level);
         String graph = game.getGraph();
-        //game.login(user_id);
+        game.login(user_id);
         directed_weighted_graph gg = deserializer(graph); //game.getJava_Graph_Not_to_be_used();
         String pokemon = game.getPokemons();
         System.out.println(pokemon);
@@ -64,13 +61,14 @@ public class Ex2 implements Runnable, ActionListener {
         while (game.isRunning()) {
             moveAgents(game, gg);
             game.move();
+
             System.out.println("time to sleep :" + dt1);
             try {
                 if (ind % 1 == 0) {
                     _win.repaint();
                 }
                 moveAgents(game, gg);
-                Thread.sleep(dt1);
+                Thread.sleep(dt1+15);
                 game.move();
                 ind++;
             } catch (Exception e) {
@@ -144,10 +142,9 @@ public class Ex2 implements Runnable, ActionListener {
     }
 
     /**
-     * i iterate my agents and give to them a misson between each move.
+     * I iterate my agents and give to them a mission between each move.
      * every agent gets to target the closest free pokemon.
-     * each pokemon that "targeted" become to "locked him" thats mean no other agent will target him at the next move.
-     *
+     * each pokemon that "targeted" becomes to "locked him" which means no other agent will target him at the next move.
      * @param game
      * @param gg
      */
@@ -174,25 +171,23 @@ public class Ex2 implements Runnable, ActionListener {
         }
     }
     /**
-     * this Method current agent  the closest free pokemon to him, and return
+     * This method current sets agent the closest free pokemon to him, and returns
      * the node he need to go to catch him
      * dt1:how much time he need to wait to get to the nextnode/catch thepokemon.
-     *
      * @param gg
      * @param pokemonList
      * @param srcAgent
      * @param currentAgent
      * @return NextNodeToGO
      */
-    private int NextNodeToGo(directed_weighted_graph gg, List<CL_Pokemon> pokemonList,
-                             int srcAgent, CL_Agent currentAgent) {
+    int NextNodeToGo(directed_weighted_graph gg, List<CL_Pokemon> pokemonList,
+                     int srcAgent, CL_Agent currentAgent) {
         //SETTINGS
         double closest = Double.POSITIVE_INFINITY;
         Long minDt = Long.MAX_VALUE;
         CL_Pokemon closestPokemon = null;
         int nextNodeTogo = -1;
         // I check what te closest free pokemon
-//>>>>>>> cfce5d49f73f9a4ebac705fb15c42dafab16c505
         for (CL_Pokemon currentPok : pokemonList) {
             boolean pokemonIsFree = !currentPok.isLockedIn();
             double currentDis = k.shortestPathDist(srcAgent, currentPok.get_edge().getSrc());
@@ -225,83 +220,10 @@ public class Ex2 implements Runnable, ActionListener {
         return nextNodeTogo;
     }
 
-//<<<<<<< HEAD
-//    private int nextNode(directed_weighted_graph gg, int srcAgent, game_service g, CL_Agent
-//            currentAgent, List<CL_Pokemon> pokemonList) {
-//        Iterator<CL_Pokemon> itPok = pokemonList.iterator();
-//        int nextNodeToGo = -1;
-//        double w = this.pokemonOnEdge(itPok.next(), gg);
-//        System.out.println("way to go for pok is :" + w);
-//        nextNodeToGo = ClosestPok(gg, pokemonList, srcAgent, currentAgent);
-//        return nextNodeToGo;
-//    }
-//
-//    private void edgesInPok(List<CL_Pokemon> cl_fs, directed_weighted_graph gg) {
-//        for (int j = 0; j < cl_fs.size(); j++) {
-//            Arena.updateEdge(cl_fs.get(j), gg);
-//        }
-//    }
-//
-//    private void init(game_service game) {
-//        String g = game.getGraph();
-//        directed_weighted_graph gg = deserializer(g);
-//        String fs = game.getPokemons();
-//        _ar = new Arena();
-//        _ar.setGraph(gg);
-//        _ar.setPokemons(Arena.json2Pokemons(fs));
-//        _win = new GuiFrame(game);
-//        _win.setTitle("Ex2 - OOP: Gotta Catch 'Em All!");
-//        _win.setSize(1000, 700);
-//        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-//        _win.setLocation(dim.width / 2 - _win.getSize().width / 2, dim.height / 2 - _win.getSize().height / 2);
-//        _win.initPanel();
-//        _win.update(_ar);
-//        String info = game.toString();
-//        JSONObject line;
-//
-//        try {
-//            line = new JSONObject(info);
-//            JSONObject ttt = line.getJSONObject("GameServer");
-//            int numberOfAgents = ttt.getInt("agents");
-//            System.out.println(info);
-//            System.out.println(game.getPokemons());
-//            int src_node = 0;  // arbitrary node, you should start at one of the pokemon
-//            ArrayList<CL_Pokemon> cl_fs = Arena.json2Pokemons(game.getPokemons());
-//            edgesInPok(cl_fs, gg);
-//            // ARENA completed.
-//            int a = 0;
-//            for (; a < numberOfAgents; a++) {
-//                Iterator<CL_Pokemon> itPok = cl_fs.iterator();
-//                while (itPok.hasNext()) {
-//                    CL_Pokemon currentPok = itPok.next();
-//                    if (!currentPok.isLockedIn()) {
-//                        edge_data e = currentPok.get_edge();
-//                        int startNode = e.getSrc();
-//                        game.addAgent(startNode);
-//                        //game.chooseNextEdge(a, e.getDest());
-//                        a++;
-//
-//                    }
-//                }
-//            }
-//
-//
-//            while (a < numberOfAgents) {
-//                int ind = a % cl_fs.size();
-//                CL_Pokemon c = cl_fs.get(ind);
-//                int nn = c.get_edge().getDest();
-//                if (c.getType() < 0) {
-//                    nn = c.get_edge().getSrc();
-//                }
-//                game.addAgent(nn);
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//
-//=======
+    /**Updates the pokemon edge which it's stand own.
+     * @param cl_fs
+     * @param gg
+     */
     private void edgesInPok(List<CL_Pokemon> cl_fs, directed_weighted_graph gg) {
         for (int j = 0; j < cl_fs.size(); j++) {
             Arena.updateEdge(cl_fs.get(j), gg);
@@ -309,18 +231,16 @@ public class Ex2 implements Runnable, ActionListener {
     }
 
     /**
-     * in this method i check how much Wight i need to move to the next node.
+     * In this method i check how much Wight i need to move to the next node.
      * @param agent
      * @param gg
      * @param e
      * @return wayToMove
      */
-
     public double toWalk(CL_Agent agent, directed_weighted_graph gg, edge_data e) {
         geo_location src = gg.getNode(e.getSrc()).getLocation();
         geo_location dest = gg.getNode(e.getDest()).getLocation();
         geo_location AgentLoc = agent.getLocation();
-
         double way = src.distance(dest);
         double wayAgent = AgentLoc.distance(dest);
         double percent = wayAgent / way;// how much percent of the wighte of the edge remains to walk.
@@ -329,12 +249,11 @@ public class Ex2 implements Runnable, ActionListener {
     }
 
     /**
-     * in this method i check how much Wight there is from the srcNode to the Pok itself.
+     * In this method i check how much Wight there is from the srcNode to the Pok itself.
      * @param currentPok
      * @param gg
      * @return wayToMove
      */
-
     public double pokemonOnEdge(CL_Pokemon currentPok, directed_weighted_graph gg) {
         edge_data e = currentPok.get_edge();
         double w = currentPok.get_edge().getWeight();
@@ -349,7 +268,7 @@ public class Ex2 implements Runnable, ActionListener {
     }
 
     /**
-     * after current agent get hoe much he need to walk to his nxt target this method return how much he will need to do this.
+     * After current agent get hoe much he need to walk to his nxt target this method return how much he will need to do this.
      * @param agent
      * @param gg
      * @param w

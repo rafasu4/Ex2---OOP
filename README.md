@@ -34,8 +34,10 @@ A Geo_Location object has 3 parameters: x, y, and z. this parameters help locati
 
 <a name="nodejs"></a>
 ## 4. NodeData_Json
+This class is used to save & load the graph in Json format. Inner class in DWGraph_DS.
 
 ## 5. NodeForHeap
+ This class represents a Node that hold distance and Node that object used by the "dijkstra algorithm". Inner class in DWGraph_DS.
 
 ## 6. DWGraph_DS
 This class represents a directional weighted graph.
