@@ -495,16 +495,21 @@ public class DWGraph_DS implements directed_weighted_graph {
             id = n.getKey();
         }
     }
+    /**
+     * This class represents a Node that hold distance and Node
+     * that object used by the "dijkstra algorithm".
+     *
+     */
     public static class NodeForHeap implements Comparable{
-        double dis;
+        double distance;
         node_data node;
 
         public NodeForHeap (node_data node,double dis){
             this.node=node;
-            this.dis=dis;
+            this.distance=dis;
         }
         public double getDis (){
-            return dis;
+            return distance;
         }
         public int getKey (){
             return node.getKey();
@@ -513,14 +518,14 @@ public class DWGraph_DS implements directed_weighted_graph {
             return node;
         }
         public void setDis (double updateddis){
-             dis=updateddis;
+             distance=updateddis;
         }
 
         @Override
         public int compareTo(@NotNull Object o) {
             NodeForHeap other =(NodeForHeap)o;
-            if (dis>other.dis)return 1;
-            if (dis<other.dis)return -1;
+            if (distance>other.distance)return 1;
+            if (distance<other.distance)return -1;
             return 0;
         }
     }

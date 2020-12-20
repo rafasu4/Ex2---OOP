@@ -28,10 +28,7 @@ public class Ex2 implements Runnable, ActionListener {
     private static MyLabel id;
     private static Thread client;
     private static long user_id;
-    private static long start = 0;
     private static long dt1 = 0;
-    private static int countMoves = 0;
-    private CL_Agent Agent = null;
 
     public static void main(String[] a) {
         client = new Thread(new Ex2());
@@ -56,13 +53,14 @@ public class Ex2 implements Runnable, ActionListener {
         while (game.isRunning()) {
             moveAgents(game, gg);
             game.move();
+
             System.out.println("time to sleep :" + dt1);
             try {
                 if (ind % 1 == 0) {
                     _win.repaint();
                 }
                 moveAgents(game, gg);
-                Thread.sleep(dt1);
+                Thread.sleep(dt1+15);
                 game.move();
                 ind++;
             } catch (Exception e) {
@@ -118,7 +116,6 @@ public class Ex2 implements Runnable, ActionListener {
                     }
                 }
             }
-
 
             while (a < numberOfAgents) {
                 int ind = a % cl_fs.size();
