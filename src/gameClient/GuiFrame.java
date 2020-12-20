@@ -43,7 +43,7 @@ public class GuiFrame extends JFrame{
     }
 
     /**Returns the game server which in play.
-     * @return game - game_service obfect
+     * @return game - game_service object
      */
     public game_service getGame(){ return game;}
 

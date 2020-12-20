@@ -1,10 +1,8 @@
 package api;
 
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 
 /**
@@ -12,15 +10,18 @@ import java.util.*;
  * Each graph builds from nodes that are connected by edges objects. Implements directed_weighted_graph interface.
  */
 public class DWGraph_DS implements directed_weighted_graph {
-    /**
-     * Holds the keys of this graph's nodes and their associate node_data object
-     **/
+    /**Holds all the edges in the graph. Using HashSet Allows an access of O(1).*/
     @Expose
     private HashSet<edge_data> Edges;
+    /**Holds all the nodes in the graph in Json format. Using HashSet Allows an access of O(1).*/
     @Expose
     private HashSet<NodeData_Json> Nodes;
+    /**Holds all the nodes in the graph. Using Hashmap Allows an access of O(1).*/
     private HashMap<Integer, node_data> allNodes;
-    private int modeCount, edgesCount;
+    /**Counts all the changes in the graph from first creating it.*/
+    private int modeCount;
+    /**The number of edges currently in this graph.*/
+    private int edgesCount;
 
 
     /**
@@ -35,14 +36,23 @@ public class DWGraph_DS implements directed_weighted_graph {
 
     }
 
-    //Case A :the node is not exist.
+    /**Constructor.
+     * @param key - the node_id
+     * @return
+     */
     @Override
     public node_data getNode(int key) {
-        boolean CaseA = !(allNodes.containsKey(key));
+        boolean CaseA = !(allNodes.containsKey(key));//checks if given node is already exist in the graph.
         if (CaseA) return null;
         return allNodes.get(key);
     }
 
+    /**
+     * returns the data of the edge (src,dest), null if none.
+     * @param src
+     * @param dest
+     * @return edge_data
+     */
     @Override
     public edge_data getEdge(int src, int dest) {
         //if one of the nodes isn't in the graph
@@ -56,6 +66,10 @@ public class DWGraph_DS implements directed_weighted_graph {
         return srcNode.neighbors.get(dest);
     }
 
+    /**
+     * adds a new node to the graph with the given node_data.
+     * @param n
+     */
     @Override
     public void addNode(node_data n) {
         // if and only if the given node isn't exist in this graph
@@ -66,6 +80,12 @@ public class DWGraph_DS implements directed_weighted_graph {
         }
     }
 
+    /**
+     * Connects an edge with weight w between node src to node dest.
+     * @param src - the source of the edge.
+     * @param dest - the destination of the edge.
+     * @param w - positive weight representing the cost (aka time, price, etc) between src-->dest.
+     */
     @Override
     //Case B - the edge exits but you need to update the wight.
     //Case C - the edge  exits (do nothing).
@@ -97,11 +117,22 @@ public class DWGraph_DS implements directed_weighted_graph {
         }
     }
 
+    /**
+     * This method returns a pointer (shallow copy) for the
+     * collection representing all the nodes in the graph.
+     * @return Collection<node_data>
+     */
     @Override
     public Collection<node_data> getV() {
         return allNodes.values();
     }
 
+    /**
+     * This method returns a pointer (shallow copy) for the
+     * collection representing all the edges getting out of
+     * the given node (all the edges starting (source) at the given node).
+     * @return Collection<edge_data>
+     */
     @Override
     public Collection<edge_data> getE(int node_id) {
         //if the node isn't in the graph
@@ -110,6 +141,12 @@ public class DWGraph_DS implements directed_weighted_graph {
         return n.neighbors.values();
     }
 
+    /**
+     * Deletes the node (with the given ID) from the graph -
+     * and removes all edges which starts or ends at this node.
+     * @return the data of the removed node (null if none).
+     * @param key
+     */
     @Override
     public node_data removeNode(int key) {
         //if the node doesn't exist
@@ -148,7 +185,12 @@ public class DWGraph_DS implements directed_weighted_graph {
          return removedNode;
     }
 
-
+    /**
+     * Deletes the edge from the graph,
+     * @param src
+     * @param dest
+     * @return the data of the removed edge (null if none).
+     */
     // case A if he is not exit :
     // case B if he exits.
     @Override
@@ -243,16 +285,27 @@ public class DWGraph_DS implements directed_weighted_graph {
         return flag;
     }
 
+    /** Returns the number of vertices (nodes) in the graph.
+     * @return size of nodes in the graph.
+     */
     @Override
     public int nodeSize() {
         return allNodes.size();
     }
 
+    /**
+     * Returns the number of edges (assume directional graph).
+     * @return The size of edges in the graph.
+     */
     @Override
     public int edgeSize() {
         return edgesCount;
     }
 
+    /**
+     * Returns the Mode Count - for testing changes in the graph.
+     * @return number of changes so far.
+     */
     @Override
     public int getMC() {
         return modeCount;
@@ -262,12 +315,17 @@ public class DWGraph_DS implements directed_weighted_graph {
      * space. Inner class in DWGraph_DS. Implements node_data interface.
      */
     public class NodeData implements node_data  {
+        /**Info for complex algorithms.*/
         @Expose
         private String info;
+        /**This node location in a three dimensional spcae.*/
         private geo_location location;
+        /**This node ID*/
         @Expose
         private int id;
+        /**This node weight*/
         private double weight;
+        /**Tag for complex algorithms*/
         private int tag;
 
         /**
@@ -373,18 +431,28 @@ public class DWGraph_DS implements directed_weighted_graph {
     Each EdgeData object has a source and destination node and weight. Inner class in DWGraph_DS. Implements of edge_data interface.
      */
     public class EdgeData implements edge_data {
+        /**The source node from which the edge goes.
+         */
         @Expose
         private final int src;
+        /**The weight of this edge.
+         */
         @Expose
         @SerializedName("w")
         private final double weight;
+        /**The destination node which the edge goes to.
+         */
         @Expose
         private final int dest;
+        /**Tag for complex algorithms.
+         */
         private int tag;
+        /**Info for complex algorithms.
+         */
         private String info;
 
         /**
-         *Constructor
+         *Constructor.
          **/
         public EdgeData(int src, int dest, double weight) {
             this.src = src;
@@ -392,36 +460,52 @@ public class DWGraph_DS implements directed_weighted_graph {
             this.weight = weight;
         }
 
+        /**Returns the source node of this edge.
+         * @return src
+         */
         @Override
         public int getSrc() {
             return src;
         }
 
+        /**Returns the destination node of this edge.
+         * @return dest
+         */
         @Override
         public int getDest() {
             return dest;
         }
 
+        /**Returns the weight of this edge.
+         */
         @Override
         public double getWeight() {
             return weight;
         }
 
+        /**Returns the info of this edge.
+         */
         @Override
         public String getInfo() {
             return info;
         }
 
+        /**Sets the info of this edge.
+         */
         @Override
         public void setInfo(String s) {
             this.info = s;
         }
 
+        /**Returns the tag of this edge.
+         */
         @Override
         public int getTag() {
             return tag;
         }
 
+        /**Sets the tag of this edge.
+         */
         @Override
         public void setTag(int t) {
             this.tag = t;
@@ -437,7 +521,11 @@ public class DWGraph_DS implements directed_weighted_graph {
         private double y;
         private double z;
 
-
+        /**Constructor.
+         * @param x
+         * @param y
+         * @param z
+         */
         public Geo_Location(double x, double y, double z) {
             this.x = x;
             this.y = y;
@@ -445,28 +533,42 @@ public class DWGraph_DS implements directed_weighted_graph {
 
         }
 
-        /**Copy constructor**/
+        /**Copy constructor
+         */
         public Geo_Location(geo_location p) {
             this.x = p.x();
             this.y = p.y();
             this.z = p.z();
         }
 
+        /**Return this node x location.
+         * @return x
+         */
         @Override
         public double x() {
             return x;
         }
 
+        /**Return this node location on the y axes.
+         * @return y
+         */
         @Override
         public double y() {
             return y;
         }
 
+        /**Return this node location on the z axes.
+         * @return z
+         */
         @Override
         public double z() {
             return z;
         }
 
+        /**Calculate the distance from this point to the given one.
+         * @param p2
+         * @return
+         */
         @Override
         public double distance(geo_location p2) {
             double dx = this.x() - p2.x();
@@ -476,6 +578,9 @@ public class DWGraph_DS implements directed_weighted_graph {
             return Math.sqrt(t);
         }
 
+        /**Get a String object representing the value of the this point.
+         * @return ans
+         */
         @Override
         public String toString(){
             String ans = "";
@@ -484,17 +589,24 @@ public class DWGraph_DS implements directed_weighted_graph {
         }
 
     }
+    /**This class is used to save & load the graph in Json format.**/
     public class NodeData_Json{
+        /**This node location in a three dimensional axes. */
         @Expose
         private String pos;
+        /**This node ID**/
         @Expose
         private int id;
 
+        /**Constructor.
+         * @param n
+         */
         public NodeData_Json(node_data n){
             if (n.getLocation()!=null) pos = n.getLocation().x()+","+n.getLocation().y()+","+n.getLocation().z();
             id = n.getKey();
         }
     }
+
     public static class NodeForHeap implements Comparable{
         double dis;
         node_data node;
