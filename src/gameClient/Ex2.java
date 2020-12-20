@@ -135,19 +135,22 @@ public class Ex2 implements Runnable, ActionListener {
     }
 
     /**
-     * i did algorytem that take all the agents into list ,
+     * i iterate my agents and give to them a misson between each move.
+     * every agent gets to target the closest free pokemon.
+     * each pokemon that "targeted" become to "locked him" thats mean no other agent will target him at the next move.
+     *
      * @param game
      * @param gg
      */
 
     private void moveAgents(game_service game, directed_weighted_graph gg) {
         System.out.println("Time: " + game.timeToEnd());
-        dt1 = 3000;
+        dt1 = 3000;// max of sleeping time.
         // setting list of agents and pokemons.
         String AgentsJson = game.getAgents();
         ArrayList<CL_Agent> agentList = (ArrayList<CL_Agent>) Arena.getAgents(AgentsJson, gg);
         ArrayList<CL_Pokemon> pokemonList = Arena.json2Pokemons(game.getPokemons());//updates edges to pok
-        this.edgesInPok(pokemonList, gg);
+        this.edgesInPok(pokemonList, gg);//updating all the edges in each pok.
         _ar.setAgents(agentList);// update where the agents.
         _ar.setPokemons(pokemonList);//update where the pokemon are.
         k.init(gg);
@@ -156,45 +159,46 @@ public class Ex2 implements Runnable, ActionListener {
         Iterator<CL_Agent> itAgent = agentList.iterator();
         while (itAgent.hasNext()) {
             CL_Agent currentAgent = itAgent.next();
-            nextNodeToGo = nextNode(gg, currentAgent.getSrcNode(), game, currentAgent, pokemonList);
-            if (nextNodeToGo != -1) {
+            nextNodeToGo = NextNodeToGo(gg, pokemonList, currentAgent.getSrcNode(), currentAgent);
+            if (nextNodeToGo != -1) {// if its -1 the agent already have a target.
                 game.chooseNextEdge(currentAgent.getID(), nextNodeToGo);//now agent i does the move then i will go to next agent.
             }
         }
     }
 
-    private void setAllFree (List<CL_Pokemon> list){
-        Iterator<CL_Pokemon> itPok = list.iterator();
-        while (itPok.hasNext()){
-            itPok.next().setLockedIn(false);
-        }
-    }
-    private int nextNode(directed_weighted_graph gg, int srcAgent, game_service g, CL_Agent currentAgent, List<CL_Pokemon> pokemonList) {
-        int nextNodeToGo = -1;
-        nextNodeToGo = ClosestPok(gg, pokemonList, srcAgent, currentAgent);
-        return nextNodeToGo;
-    }
-
-    private int ClosestPok(directed_weighted_graph gg, List<CL_Pokemon> pokemonList,
-                           int srcAgent, CL_Agent currentAgent) {
+    /**
+     * this Method current agent  the closest free pokemon to him, and return
+     * the node he need to go to catch him
+     * dt1:how much time he need to wait to get to the nextnode/catch thepokemon.
+     *
+     * @param gg
+     * @param pokemonList
+     * @param srcAgent
+     * @param currentAgent
+     * @return NextNodeToGO
+     */
+    private int NextNodeToGo(directed_weighted_graph gg, List<CL_Pokemon> pokemonList,
+                             int srcAgent, CL_Agent currentAgent) {
+        //SETTINGS
         double closest = Double.POSITIVE_INFINITY;
-        long minDt = 1000000;
+        Long minDt = Long.MAX_VALUE;
         CL_Pokemon closestPokemon = null;
         int nextNodeTogo = -1;
+        // I check what te closest free pokemon
         for (CL_Pokemon currentPok : pokemonList) {
             boolean pokemonIsFree = !currentPok.isLockedIn();
             double currentDis = k.shortestPathDist(srcAgent, currentPok.get_edge().getSrc());
             boolean thereIsWay = (currentDis != -1);
-            if (pokemonIsFree && thereIsWay) {//compare the best way
-                int src_pok = currentPok.get_edge().getSrc();
-                if (closest > currentDis) {
+            int src_pok = currentPok.get_edge().getSrc();
+            if (pokemonIsFree && thereIsWay) {
+
+                if (closest > currentDis) { // if this pokemon is closest
                     closest = currentDis;
                     nextNodeTogo = src_pok;
                     closestPokemon = currentPok;
-                    if (nextNodeTogo == srcAgent) {// if final move.
 
+                    if (nextNodeTogo == srcAgent) {// if the agent on the srcPokemon node.
                         nextNodeTogo = currentPok.get_edge().getDest();
-                        closestPokemon.setLockedIn(true);
                         double w = this.pokemonOnEdge(currentPok, gg);
                         minDt = howMuchToSleep(currentAgent, gg, w);
                         if (minDt < dt1) dt1 = minDt;
@@ -203,8 +207,8 @@ public class Ex2 implements Runnable, ActionListener {
                 }
             }
         }
-        if (nextNodeTogo != -1) {
-            nextNodeTogo = k.shortestPath(srcAgent, nextNodeTogo).get(2).getKey();
+        if (nextNodeTogo != -1) { // if the agent not on the srcPokemon node.
+            nextNodeTogo = k.shortestPath(srcAgent, nextNodeTogo).get(2).getKey();// the list gives me the next node i need to go.
             edge_data e = gg.getEdge(currentAgent.getSrcNode(), nextNodeTogo);
             double w = this.toWalk(currentAgent, gg, e);
             minDt = howMuchToSleep(currentAgent, gg, w);
@@ -222,17 +226,32 @@ public class Ex2 implements Runnable, ActionListener {
         }
     }
 
+    /**
+     * in this method i check how much Wight i need to move to the next node.
+     * @param agent
+     * @param gg
+     * @param e
+     * @return wayToMove
+     */
 
     public double toWalk(CL_Agent agent, directed_weighted_graph gg, edge_data e) {
         geo_location src = gg.getNode(e.getSrc()).getLocation();
         geo_location dest = gg.getNode(e.getDest()).getLocation();
         geo_location AgentLoc = agent.getLocation();
+
         double way = src.distance(dest);
-        double wayPok = AgentLoc.distance(dest);
-        double percent = wayPok / way;
+        double wayAgent = AgentLoc.distance(dest);
+        double percent = wayAgent / way;// how much percent of the wighte of the edge remains to walk.
         double wayToMove = percent * e.getWeight();
         return wayToMove;
     }
+
+    /**
+     * in this method i check how much Wight there is from the srcNode to the Pok itself.
+     * @param currentPok
+     * @param gg
+     * @return wayToMove
+     */
 
     public double pokemonOnEdge(CL_Pokemon currentPok, directed_weighted_graph gg) {
         edge_data e = currentPok.get_edge();
@@ -242,16 +261,34 @@ public class Ex2 implements Runnable, ActionListener {
         geo_location PokLocation = currentPok.getLocation();
         double way = src.distance(dest);
         double wayPok = src.distance(PokLocation);
-        double percent = wayPok / way;
+        double percent = wayPok / way;//how much percent of the wight there is from the src to the Pokemon.
         double wayToMove = percent * w;
         return wayToMove;
     }
 
+    /**
+     * after current agent get hoe much he need to walk to his nxt target this method return how much he will need to do this.
+     * @param agent
+     * @param gg
+     * @param w
+     * @return time in miliSeconds
+     */
     private long howMuchToSleep(CL_Agent agent, directed_weighted_graph gg, double w) {
         double speed = agent.getSpeed();
         double timeToSleep = w / speed;
         Double time = timeToSleep * 1000;
         return time.longValue();
+    }
+
+    /**
+     * this set that the all the pokemon isn't targeted by some agent.
+     * @param list
+     */
+    private void setAllFree(List<CL_Pokemon> list) {
+        Iterator<CL_Pokemon> itPok = list.iterator();
+        while (itPok.hasNext()) {
+            itPok.next().setLockedIn(false);
+        }
     }
 
 
