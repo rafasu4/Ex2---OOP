@@ -34,7 +34,7 @@ public class GuiPanel extends JPanel {
         myFrame.add(this);
     }
 
-    
+
     public void updateFrame() {
         Range rx = new Range(20,this.getWidth()-20);
         Range ry = new Range(this.getHeight()-10,150);

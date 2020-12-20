@@ -53,12 +53,14 @@ public class Ex2 implements Runnable, ActionListener {
         game.startGame();
         int ind=0;
         while (game.isRunning()) {
+            moveAgents(game, gg);
+            game.move();
             System.out.println("time to sleep :"+dt1);
             try {
                 if (ind % 1 == 0) {
                     _win.repaint();
                 }
-                moveAgentsyeho(game, gg);
+                moveAgents(game, gg);
                 Thread.sleep(dt1);
                 game.move();
                 ind++;
@@ -76,7 +78,8 @@ public class Ex2 implements Runnable, ActionListener {
 
     //game.stopGame();
 
-    private void moveAgentsyeho(game_service game, directed_weighted_graph gg) {
+    private void moveAgents(game_service game, directed_weighted_graph gg) {
+        System.out.println("Time: "+game.timeToEnd());
         dt1 = 3000;
         String lg = game.move();// i move from the prev standing.
         // setting list of agents and pokemons.
@@ -88,23 +91,14 @@ public class Ex2 implements Runnable, ActionListener {
         _ar.setPokemons(pokemonList);//update where the pokemon are.
         k.init(gg);
 
-        int nextNodeToGo = 0;
-
+        int nextNodeToGo ;
         Iterator<CL_Agent> itAgent = agentList.iterator();
         while (itAgent.hasNext()) {
-
             CL_Agent currentAgent = itAgent.next();
-            Agent = currentAgent;
-            boolean currentAgentIsWaiting = currentAgent.getNextNode() == -1;
-            //if (currentAgentIsWaiting) {//if he is on node.
-
             nextNodeToGo = nextNodeyeho(gg, currentAgent.getSrcNode(), game, currentAgent, pokemonList);
-            double w = gg.getEdge(currentAgent.getSrcNode(), nextNodeToGo).getWeight();
-
             if (nextNodeToGo != -1) {
                 game.chooseNextEdge(currentAgent.getID(), nextNodeToGo);//now agent i does the move then i will go to next agent.
             }
-            // }
         }
     }
 
@@ -119,7 +113,7 @@ public class Ex2 implements Runnable, ActionListener {
                     return waytoMove;
                 }
 
-                public double pokemononedge (CL_Pokemon currentPok, directed_weighted_graph gg){
+                public double pokemonOnEdge(CL_Pokemon currentPok, directed_weighted_graph gg){
                     edge_data e = currentPok.get_edge();
                     double w = currentPok.get_edge().getWeight();
                     geo_location src = gg.getNode(e.getSrc()).getLocation();
@@ -128,7 +122,7 @@ public class Ex2 implements Runnable, ActionListener {
                     double way = src.distance(dest);
                     double wayPok = src.distance(PokLocation);
                     double percent = wayPok / way;
-                    double waytoMove = percent * e.getWeight();
+                    double waytoMove = percent * w;
                     return waytoMove;
                 }
 
@@ -139,52 +133,7 @@ public class Ex2 implements Runnable, ActionListener {
                     return time.longValue();
                 }
 
-                private void moveAgents (game_service game, directed_weighted_graph gg){
-                    this.dt1 = 10000000;
-                    String lg = game.move();
-                    List<CL_Agent> log = Arena.getAgents(lg, gg);
-                    _ar.setAgents(log);
-                    //ArrayList<OOP_Point3D> rs = new ArrayList<OOP_Point3D>();
-                    String fs = game.getPokemons();
-                    List<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
-                    _ar.setPokemons(ffs);
-                    for (int i = 0; i < log.size(); i++) {
-                        CL_Agent ag = log.get(i);
-                        whereToGo(ag, _ar.getPokemons(), game, gg);
-                        int id = ag.getID();
-                        int dest = ag.getNextNode();
-                        int src = ag.getSrcNode();
-                        double v = ag.getValue();
-                        if (dest == -1) {
-                            dest = nextNode(gg, src, game);
-                            game.chooseNextEdge(ag.getID(), dest);
-                            System.out.println("Agent: " + id + ", val: " + v + "   turned to node: " + dest);
-                        }
-                    }
-                }
 
-
-                private static void whereToGo (CL_Agent ag, List < CL_Pokemon > ffs, game_service
-                game, directed_weighted_graph g){
-                    k.init(g);
-                    Iterator<CL_Pokemon> itPoke = ffs.listIterator();
-                    while (itPoke.hasNext()) {
-                        CL_Pokemon currentPoke = itPoke.next();
-                        if (!currentPoke.isLockedIn()) {
-                            try {
-                                double newPath = k.shortestPathDist(ag.getSrcNode(), currentPoke.get_edge().getDest());
-                                double curPath = k.shortestPathDist(ag.getNextNode(), ag.getSrcNode());
-                                if (newPath != -1 && newPath < curPath) {
-                                    game.chooseNextEdge(ag.getID(), currentPoke.get_edge().getDest());
-                                    ag.get_curr_fruit().setLockedIn(false);
-                                    ag.set_curr_fruit(currentPoke);
-                                    currentPoke.setLockedIn(true);
-                                }
-                            } catch (NullPointerException e) {
-                            }
-                        }
-                    }
-                }
 
                 private static int MostValuePok (directed_weighted_graph gg, List < CL_Pokemon > pokemonList,
                 int srcAgent){
@@ -235,22 +184,19 @@ public class Ex2 implements Runnable, ActionListener {
                                 nextNodetogo = src_pok;
                                 closestPokemon = currentPok;
                                 if (nextNodetogo == srcAgent) {// if final move.
-                                    currentAgent.setStep(true);
+
                                     nextNodetogo = currentPok.get_edge().getDest();
                                     closestPokemon.setLockedIn(true);
-                                    double w = this.pokemononedge(currentPok, gg);
+                                    double w = this.pokemonOnEdge(currentPok, gg);
                                     minDt = howMuchToSleep(currentAgent, gg, w);
                                     if (minDt < dt1) dt1 = minDt;
                                     return nextNodetogo;
                                 }
-                                currentAgent.setStep(false);
                             }
-
                         }
-                    }// if not final move . need to jump to node.
+                    }
                     if (nextNodetogo != -1) {
                         nextNodetogo = k.shortestPath(srcAgent, nextNodetogo).get(2).getKey();
-
                         edge_data e = gg.getEdge(currentAgent.getSrcNode(), nextNodetogo);
                         double w = this.toWalk(currentAgent, gg, e);
                         minDt = howMuchToSleep(currentAgent, gg, w);
@@ -265,27 +211,10 @@ public class Ex2 implements Runnable, ActionListener {
                 currentAgent, List < CL_Pokemon > pokemonList){
                     Iterator<CL_Pokemon> itPok = pokemonList.iterator();
                     int nextNodeToGo = -1;
-                    double w = this.pokemononedge(itPok.next(), gg);
+                    double w = this.pokemonOnEdge(itPok.next(), gg);
                     System.out.println("way to go for pok is :" + w);
                     nextNodeToGo = ClosestPok(gg, pokemonList, srcAgent, currentAgent);
                     return nextNodeToGo;
-                }
-
-
-                private static int nextNode (directed_weighted_graph gg,int src, game_service g){
-                    int ans = -1;
-                    k.init(gg);
-                    Collection<edge_data> ee = gg.getE(src);
-                    Iterator<edge_data> itr = ee.iterator();
-                    int s = ee.size();
-                    int r = (int) (Math.random() * s);
-                    int i = 0;
-                    while (i < r) {
-                        itr.next();
-                        i++;
-                    }
-                    ans = itr.next().getDest();
-                    return ans;
                 }
 
                 private void edgesInPok (List < CL_Pokemon > cl_fs, directed_weighted_graph gg){
@@ -297,7 +226,6 @@ public class Ex2 implements Runnable, ActionListener {
                 private void init (game_service game){
                     String g = game.getGraph();
                     directed_weighted_graph gg = deserializer(g);
-                    dw_graph_algorithms g1 = new DWGraph_Algo();
                     String fs = game.getPokemons();
                     _ar = new Arena();
                     _ar.setGraph(gg);
@@ -321,10 +249,6 @@ public class Ex2 implements Runnable, ActionListener {
                         System.out.println(game.getPokemons());
                         int src_node = 0;  // arbitrary node, you should start at one of the pokemon
                         ArrayList<CL_Pokemon> cl_fs = Arena.json2Pokemons(game.getPokemons());
-                        //updating each pokemon edge location
-                        //  for (int j = 0; j < cl_fs.size(); j++) {
-                        //    Arena.updateEdge(cl_fs.get(j), gg);
-                        //}
                         edgesInPok(cl_fs, gg);
                         // ARENA completed.
                         int a = 0;
