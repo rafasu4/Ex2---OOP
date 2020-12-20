@@ -28,7 +28,6 @@ public class GuiFrame extends JFrame{
         this.setPanel(myPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-
     }
 
     public void update(Arena _ar) {

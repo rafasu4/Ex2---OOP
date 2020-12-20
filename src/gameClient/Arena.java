@@ -37,6 +37,7 @@ public class Arena {
 		this.setAgents(r);
 		this.setPokemons(p);
 	}
+
 	public void setPokemons(List<CL_Pokemon> f) {
 		this._pokemons = f;
 	}
@@ -44,6 +45,7 @@ public class Arena {
 		this._agents = f;
 	}
 	public void setGraph(directed_weighted_graph g) {this._gg =g;}//init();}
+
 	private void init( ) {
 		MIN=null; MAX=null;
 		double x0=0,x1=0,y0=0,y1=0;

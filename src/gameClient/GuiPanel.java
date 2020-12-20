@@ -1,20 +1,21 @@
 package gameClient;
 
-import api.*;
+import api.directed_weighted_graph;
+import api.edge_data;
+import api.geo_location;
+import api.node_data;
 import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**This class represents a specific adapted JPanel to this project.**/
 public class GuiPanel extends JPanel {
@@ -33,7 +34,8 @@ public class GuiPanel extends JPanel {
         myFrame.add(this);
     }
 
-    void updateFrame() {
+    
+    public void updateFrame() {
         Range rx = new Range(20,this.getWidth()-20);
         Range ry = new Range(this.getHeight()-10,150);
         Range2D frame = new Range2D(rx,ry);
@@ -48,36 +50,33 @@ public class GuiPanel extends JPanel {
         drawGraph(g);
         drawAgents(g);
         drawInfo(g);
+        drawHud(g);
     }
 
-    /**Starts a new thread that represents the remaining time till the end of the game
+    /**Prints on the screen the time that's left till the end of the game and the grade of each agent.
+     * @param g
      */
-    public void timer() {
-        JPanel p = new JPanel();
-        p.setLayout(null);
-        this.myFrame.add(p);
-        l = new MyLabel(myFrame.getGame().timeToEnd());
-        l.setBounds(10,10,500,25);
-        p.add(l);
-        //creating an anonymous ActionListener
-        Timer t = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                long seconds = l.t;
-                seconds--;
-                long second = TimeUnit.SECONDS.toSeconds(seconds)
-                        - (TimeUnit.SECONDS.toMinutes(seconds) * 60);
-                l.setText("Time Remaining: " + second + " Second(s)");
-            }
-        });
-        t.start();
+    private void drawHud(Graphics g){
+        g.setColor(Color.BLACK);
+        int seconds = (int) myFrame.getGame().timeToEnd()/1000;
+        g.drawString("Remaining Time : " + seconds + " Second(s)", 15,20);
+        int y = 45;
+        double total = 0;
+        List<CL_Agent> agents = myFrame.get_ar().getAgents();
+        for(CL_Agent current: agents){
+            g.drawString("Agent " + current.getID() + ": "+ current.getValue()+" points", 15,y);
+            total+=current.getValue();
+            y+=20;
+        }
+        g.drawString("Total points: "+ total, 15, y);
     }
+
 
     /**
      *
      * @param g
      */
-    public void drawInfo(Graphics g) {
+    private void drawInfo(Graphics g) {
         java.util.List<String> str = myFrame.get_ar().get_info();
         String dt = "none";
         for(int i=0;i<str.size();i++) {
@@ -88,7 +87,7 @@ public class GuiPanel extends JPanel {
     /**Paints a graph on GuiPanel. Given method from the OOP course.
       * @param g
      */
-    public void drawGraph(Graphics g) {
+    private void drawGraph(Graphics g) {
         directed_weighted_graph gg = myFrame.get_ar().getGraph();
         Iterator<node_data> iter = gg.getV().iterator();
         while(iter.hasNext()) {
@@ -107,7 +106,7 @@ public class GuiPanel extends JPanel {
     /**Paints a pokemon on the graph in an image form. Given method from the OOP course with some changes of the look of the pokemon.
      * @param g
      */
-    public void drawPokemons(Graphics g) {
+    private void drawPokemons(Graphics g) {
         java.util.List<CL_Pokemon> fs = myFrame.get_ar().getPokemons();
         if(fs!=null) {
             Iterator<CL_Pokemon> itr = fs.iterator();
@@ -132,7 +131,7 @@ public class GuiPanel extends JPanel {
     /**Paints an agent on the graph in an image form. Given method from the OOP course with some changes of the look of the agent.
      * @param g
      */
-    public void drawAgents(Graphics g) {
+    private void drawAgents(Graphics g) {
         List<CL_Agent> rs = myFrame.get_ar().getAgents();
         g.setColor(Color.red);
         int i=0;
@@ -158,7 +157,7 @@ public class GuiPanel extends JPanel {
      * @param r - a number for more accurate location
      * @param g
      */
-    public void drawNode(node_data n, int r, Graphics g) {
+    private void drawNode(node_data n, int r, Graphics g) {
         geo_location pos = n.getLocation();
         geo_location fp = myFrame.get_w2f().world2frame(pos);
         g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
@@ -169,7 +168,7 @@ public class GuiPanel extends JPanel {
      * @param e - edge_data object
      * @param g
      */
-    public void drawEdge(edge_data e, Graphics g) {
+    private void drawEdge(edge_data e, Graphics g) {
         directed_weighted_graph gg = myFrame.get_ar().getGraph();
         geo_location s = gg.getNode(e.getSrc()).getLocation();
         geo_location d = gg.getNode(e.getDest()).getLocation();

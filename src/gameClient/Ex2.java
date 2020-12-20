@@ -50,22 +50,17 @@ public class Ex2 implements Runnable, ActionListener {
         Thread player = new Thread(play);
         player.start();
         init(game);
-        Date date;
-        long l = game.startGame();
         game.startGame();
-        _win.getPanel().timer();
         int ind=0;
-        long dt=100;
         while (game.isRunning()) {
-            moveAgentsyeho(game, gg);
-            game.move();
             System.out.println("time to sleep :"+dt1);
             try {
                 if (ind % 1 == 0) {
                     _win.repaint();
                 }
-
+                moveAgentsyeho(game, gg);
                 Thread.sleep(dt1);
+                game.move();
                 ind++;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -80,8 +75,8 @@ public class Ex2 implements Runnable, ActionListener {
 
 
     //game.stopGame();
+
     private void moveAgentsyeho(game_service game, directed_weighted_graph gg) {
-        System.out.println("Time: "+game.timeToEnd());
         dt1 = 3000;
         String lg = game.move();// i move from the prev standing.
         // setting list of agents and pokemons.
