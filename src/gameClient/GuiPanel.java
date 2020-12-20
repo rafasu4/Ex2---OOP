@@ -45,6 +45,7 @@ public class GuiPanel extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
+        updateFrame();
         super.paintComponent(g);
         drawPokemons(g);
         drawGraph(g);
