@@ -2,16 +2,118 @@ package tests;
 
 import api.*;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
-import java.util.Random;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-
 class DWGraph_AlgoTest {
+
+    @Test
+    public void transpose(){
+        DWGraph_Algo k = new DWGraph_Algo();
+        DWGraph_DS g = new DWGraph_DS();
+        for (int i = 0; i < 100; i++) {
+            DWGraph_DS.NodeData node = g.new NodeData(i, i);
+            g.addNode(node);
+        }
+        g.connect(3, 4, 1);
+        g.connect(3, 7, 1);
+        g.connect(7, 3, 1);
+        g.connect(7, 5, 1);
+        g.connect(5, 0, 1);
+        g.connect(5, 6, 1);
+        g.connect(4, 5, 1);
+        g.connect(6, 4, 1);
+        g.connect(6, 4, 1);
+        g.connect(6, 0, 1);
+        g.connect(6, 2, 1);
+        g.connect(0, 1, 1);
+        g.connect(1, 2, 1);
+        g.connect(2, 0, 1);
+        k.init(g);
+        directed_weighted_graph g_t = k.transpose();
+        System.out.println(g_t.getV().size());
+
+    }
+
+    @Test
+    public void connectedComponents(){
+        DWGraph_Algo k = new DWGraph_Algo();
+        DWGraph_DS g = new DWGraph_DS();
+        k.init(g);
+        for (int i = 0; i < 10; i++) {
+            DWGraph_DS.NodeData node = g.new NodeData(i, i);
+            g.addNode(node);
+        }
+        g.connect(3, 4, 1);
+        g.connect(3, 7, 1);
+        g.connect(7, 3, 1);
+        g.connect(7, 5, 1);
+        g.connect(5, 0, 1);
+        g.connect(5, 6, 1);
+        g.connect(4, 5, 1);
+        g.connect(6, 4, 1);
+        g.connect(6, 4, 1);
+        g.connect(6, 0, 1);
+        g.connect(6, 2, 1);
+        g.connect(0, 1, 1);
+        g.connect(1, 2, 1);
+        g.connect(2, 0, 1);
+        List<Integer> l0 = k.connectedComponents(0);
+        List<Integer> l1 = k.connectedComponents(1);
+        List<Integer> l2 = k.connectedComponents(2);
+        List<Integer> l3 = k.connectedComponents(3);
+        List<Integer> l4 = k.connectedComponents(4);
+        List<Integer> l5 = k.connectedComponents(5);
+        List<Integer> l6 = k.connectedComponents(6);
+        List<Integer>  l7 = k.connectedComponents(7);
+        assertEquals(l2, l1); // first component
+        assertEquals(l0, l2); // first component
+        assertEquals(l7, l3);  // second component
+        assertEquals(l6, l5);  // third component
+        assertEquals(l4, l6);  // third component
+
+    }
+
+
+    @Test
+    public void pyDfs(){
+        DWGraph_Algo k = new DWGraph_Algo();
+        DWGraph_DS g = new DWGraph_DS();
+        for (int i = 0; i < 100; i++) {
+            DWGraph_DS.NodeData node = g.new NodeData(i, i);
+            g.addNode(node);
+        }
+        k.init(g);
+        g.connect(4, 1, 2);
+        g.connect(1, 10, 2);
+        g.connect(10, 1, 2);
+        g.connect(9, 6, 6);
+        List<Integer> temp = new ArrayList<>();
+        temp.add(1);
+        temp.add(10);
+        assertTrue(temp.equals(k.pyDfs(1, g)));
+        temp.clear();
+        temp.add(1);
+        temp.add(4);
+        temp.add(10);
+        assertTrue(temp.equals(k.pyDfs(4, g)));
+        temp.clear();
+        temp.add(6);
+        temp.add(9);
+        assertTrue(temp.equals(k.pyDfs(9, g)));
+        temp.clear();
+        temp.add(6);
+        assertTrue(temp.equals(k.pyDfs(6, g)));
+        temp.clear();
+        temp.add(20);
+        assertTrue(temp.equals(k.pyDfs(20, g)));
+    }
 
     @Test
     public void copy() {

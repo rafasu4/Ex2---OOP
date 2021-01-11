@@ -327,7 +327,6 @@ public class DWGraph_DS implements directed_weighted_graph {
         private double weight;
         /**Tag for complex algorithms*/
         private int tag;
-
         /**
          * Holds connected neighbor: key - neighbor ID, value - edge_data object that holds edge info.
          **/
@@ -376,6 +375,10 @@ public class DWGraph_DS implements directed_weighted_graph {
             edgesFrom=new HashMap<>();
             this.info = n.getInfo();
             this.tag = n.getTag();
+        }
+
+        public HashMap<Integer, edge_data> getNeighbors(){
+            return this.neighbors;
         }
 
         @Override

@@ -177,7 +177,79 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         double inf = Double.POSITIVE_INFINITY;
         if (allDistanceFromSrc.get(dest) == inf) return -1;
         return allDistanceFromSrc.get(dest);
+    }
 
+    public List<Integer> connectedComponents(int id){
+        directed_weighted_graph g = this.getGraph();
+        List<Integer> ans = new ArrayList<>();
+        List<Integer> component = this.pyDfs(id,g);
+        directed_weighted_graph g_t = this.transpose();
+        this.init(g_t);
+        List<Integer> component_t = this.pyDfs(id,g);
+        for(Integer nodeId: component){
+            if(!ans.contains(nodeId)) ans.add(nodeId);
+        }
+        for(Integer nodeId: component_t){
+            if(!ans.contains(nodeId)){
+                ans.add(nodeId);
+            }
+        }
+        for(node_data v: g.getV()){
+            v.setInfo("");
+        }
+        this.init(g);
+        Collections.sort(ans);
+        return ans;
+    }
+
+
+    public directed_weighted_graph transpose() {
+        directed_weighted_graph ans = this.copy();
+        Collection<node_data> all_nodes = this.getGraph().getV();
+        // removing all edges from graph
+        for (node_data n : all_nodes) {
+            Collection<edge_data> E = this.getGraph().getE(n.getKey());
+            for (edge_data edge : E) {
+                int dest = edge.getDest();
+                ans.removeEdge(n.getKey(), dest);
+            }
+        }
+        //reversing the edges of the origin graph in the transposed one
+        for (node_data n : all_nodes) {
+            Collection<edge_data> E = this.getGraph().getE(n.getKey());
+            for (edge_data edge : E) {
+                int dest = edge.getDest();
+                double weight = edge.getWeight();
+                ans.connect(dest, n.getKey(), weight);
+            }
+        }
+        return ans;
+    }
+
+    public List<Integer> pyDfs(int id, directed_weighted_graph g){
+        List<Integer> ans = new ArrayList<>();
+        Stack<Integer> s = new Stack<>();
+        ans.add(id);
+        for (node_data node: g.getV() ){
+            node.setInfo("X");
+        }
+        s.push(id);
+        while (!s.isEmpty()){
+            DWGraph_DS.NodeData currentNode = (DWGraph_DS.NodeData) g.getNode(s.pop());
+            if(currentNode.getInfo() != "V"){
+                currentNode.setInfo("V");
+                Set<Integer> neighborsId = currentNode.getNeighbors().keySet();
+                for(Integer neighbor: neighborsId ){
+                    node_data currentNeighbor = g.getNode(neighbor);
+                    if(currentNeighbor.getInfo() != "V"){
+                        s.push(neighbor);
+                        ans.add(neighbor);
+                    }
+                }
+            }
+        }
+        Collections.sort(ans);
+        return ans;
     }
 
     /**
@@ -200,7 +272,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             if (thisnode.getKey() != src) {
                 int keyNode = thisnode.getKey();
                 toReturn.put(keyNode, inf);
-
             }
         }
 

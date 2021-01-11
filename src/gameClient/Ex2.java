@@ -47,7 +47,7 @@ public class Ex2 implements Runnable, ActionListener {
     public void run() {
         game_service game = Game_Server_Ex2.getServer(game_level);
         String graph = game.getGraph();
-        game.login(user_id);
+        //game.login(user_id);
         directed_weighted_graph gg = deserializer(graph); //game.getJava_Graph_Not_to_be_used();
         String pokemon = game.getPokemons();
         System.out.println(pokemon);
