@@ -1,5 +1,7 @@
 package tests;
 
+import java.util.Date;
+
 import api.*;
 import org.junit.jupiter.api.Test;
 
@@ -254,7 +256,39 @@ class DWGraph_AlgoTest {
         assertEquals(ga1.shortestPathDist(0,4),3);
 
     }
+    @Test
+    public void test_ex3(){
+        Date date = new Date();
+        DWGraph_Algo ga=new DWGraph_Algo();
+        String [] file_names= {"G_10_80_1.json", "G_100_800_1.json", "G_1000_8000_1.json", "G_10000_80000_1.json",
+                "G_20000_160000_1.json"
+                , "G_30000_240000_1.json"};
+        int paths [][]={{0, 9}, {1, 99}, {1, 999}, {1, 9000}, {1, 18000}, {1, 29979}};
 
+        for (int i = 0; i < 6; i++) {
+            System.out.println(file_names[i]+"Results :");
+            ga.load(file_names[i]);
+
+            //shortestPath path Test
+
+            long start = date.getTime();
+            ga.shortestPath(paths[i][0],paths[i][1]);
+            long end=date.getTime();
+            System.out.println("time of shoertes path is " +(end-start));
+
+            // Connected Componets Test
+             start = date.getTime();
+            ga.connectedComponents(0);
+             end=date.getTime();
+            System.out.println("time of Componets path is " +(end-start));
+
+            //Connected Componet Test
+
+
+
+
+        }
+    }
 
     public static directed_weighted_graph GcreatorNotRandom(int v_size, int e_size) {
         DWGraph_DS a = new DWGraph_DS();
